@@ -47,7 +47,7 @@ def setup_socket_events(socketio, datos_recientes, sensor_activo, maquina_encend
     @socketio.on('datos_sensor')
     def handle_sensor_data(datos):
         """Manejar datos recibidos del sensor"""
-        nonlocal sensor_activo
+        nonlocal sensor_activo, maquina_encendida
         
         # Solo procesamos datos si el sensor está activo
         if sensor_activo:
@@ -67,12 +67,36 @@ def setup_socket_events(socketio, datos_recientes, sensor_activo, maquina_encend
                 print("\n----- PREDICCIÓN DEL MODELO -----")
                 print(f"Datos: Temp={sensor_values[0]}°C, Vibración={sensor_values[1]}, Presión={sensor_values[2]}")
                 print(f"Acción recomendada: {prediction['action_explanation']}")
-                if prediction['is_critical']:
-                    print("¡ALERTA CRÍTICA! Se recomienda intervención inmediata.")
+                
+                # Nueva funcionalidad: Apagado automático si es crítico
+                if prediction['is_critical'] and maquina_encendida:
+                    print("¡ALERTA CRÍTICA! Iniciando apagado automático de emergencia.")
+                    
+                    # Cambiar estado de la máquina
+                    maquina_encendida = False
+                    
+                    # Notificar a todos los clientes conectados sobre el cambio
+                    socketio.emit('estado_maquina', {
+                        'encendida': False, 
+                        'auto_shutdown': True, 
+                        'mensaje': 'Apagado automático por condición crítica detectada'
+                    })
+                    
+                    # Notificar al sensor sobre el cambio
+                    socketio.emit('comando_sensor', {'encender': False})
+                    
+                    print("Máquina apagada automáticamente por la IA")
+                elif prediction['is_critical']:
+                    print("¡ALERTA CRÍTICA! Se recomienda intervención inmediata (máquina ya está apagada).")
+                
                 print("--------------------------------\n")
                 
                 # Añadir predicción a los datos para enviar al cliente
                 datos['prediccion'] = prediction
+                
+                # Agregar información sobre si hubo apagado automático
+                if prediction['is_critical'] and maquina_encendida:
+                    datos['auto_shutdown'] = True
             
             # Enviar datos a todos los clientes conectados
             socketio.emit('nuevos_datos', datos)

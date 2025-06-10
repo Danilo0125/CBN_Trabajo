@@ -11,11 +11,7 @@ class MaquinasCerveceria(db.Model):
     descripcion = db.Column(db.Text)
     tipo_maquina = db.Column(db.String(50))
     frec_manteni = db.Column(db.String(50))
-    temp_mini = db.Column(db.Float)
-    temp_maxi = db.Column(db.Float)
-    uso_operativo = db.Column(db.Float)
-    presion_max = db.Column(db.Float)
-    criticidad = db.Column(db.String(20))
+
     
     # Relaciones
     productos = db.relationship('ProductoCerveza', backref='maquina', lazy=True)

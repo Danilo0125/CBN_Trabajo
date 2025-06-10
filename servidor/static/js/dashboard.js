@@ -532,17 +532,28 @@ socket.on('estado_maquina', (data) => {
     actualizarBotonEncendido(data.encendida);
     
     // Mostrar mensaje de cambio de estado
-    const mensaje = data.encendida ? 'Máquina encendida' : 'Máquina apagada';
-    console.log(mensaje);
+    let mensaje = data.encendida ? 'Máquina encendida' : 'Máquina apagada';
     
-    // Mostrar notificación al usuario
-    mostrarNotificacion(mensaje, data.encendida ? 'success' : 'info');
+    // Si fue un apagado automático, mostrar mensaje especial
+    if (data.auto_shutdown) {
+        mensaje = data.mensaje || 'Apagado automático por la IA';
+        // Mostrar notificación más visible para apagados automáticos
+        mostrarNotificacion(mensaje, 'error', 6000); // Duración más larga (6 segundos)
+        
+        // Reproducir sonido de alerta para llamar la atención
+        reproducirSonidoAlerta();
+    } else {
+        // Mostrar notificación normal
+        mostrarNotificacion(mensaje, data.encendida ? 'success' : 'info');
+    }
+    
+    console.log(mensaje);
 });
 
 /**
  * Muestra una notificación temporal al usuario
  */
-function mostrarNotificacion(mensaje, tipo = 'info') {
+function mostrarNotificacion(mensaje, tipo = 'info', duracion = 3000) {
     // Crear elemento de notificación si no existe
     let notifContainer = document.getElementById('notif-container');
     if (!notifContainer) {
@@ -563,17 +574,22 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
     if (tipo === 'error') bgColor = 'bg-red-500';
     if (tipo === 'warning') bgColor = 'bg-yellow-500';
     
-    notif.className = `${bgColor} text-white rounded-lg shadow-lg p-4 mb-3 transform transition-all duration-300 ease-in-out`;
+    // Para apagados automáticos, añadir clase especial para destacar más
+    const extraClasses = tipo === 'error' && mensaje.includes('Apagado automático') 
+        ? 'border-2 border-white font-bold' 
+        : '';
+    
+    notif.className = `${bgColor} ${extraClasses} text-white rounded-lg shadow-lg p-4 mb-3 transform transition-all duration-300 ease-in-out`;
     notif.innerHTML = mensaje;
     
     // Añadir al contenedor
     notifContainer.appendChild(notif);
     
-    // Eliminar después de 3 segundos
+    // Eliminar después del tiempo especificado
     setTimeout(() => {
         notif.classList.add('opacity-0', 'translate-x-full');
         setTimeout(() => notif.remove(), 300);
-    }, 3000);
+    }, duracion);
 }
 
 // Evento para nuevos datos de sensores
