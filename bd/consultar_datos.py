@@ -3,10 +3,13 @@ Ejemplo de consulta de datos en la base de datos
 """
 try:
     from database import create_app
-    from Modelos import db, MaquinasCerveceria, ProductoCerveza, InsumosCerveza, Usuario, SimulacionEstado
+    from Modelos import db, MaquinasCerveceria, Usuario, SimulacionEstado, Ejercicio
 except ImportError:
     from .database import create_app
-    from .Modelos import db, MaquinasCerveceria, ProductoCerveza, InsumosCerveza, Usuario, SimulacionEstado
+    from .Modelos import db, MaquinasCerveceria, Usuario, SimulacionEstado, Ejercicio
+
+import json
+import numpy as np
 
 def consultar_datos():
     app = create_app()
@@ -23,20 +26,6 @@ def consultar_datos():
         maquinas = MaquinasCerveceria.query.all()
         for maquina in maquinas:
             print(f"ID: {maquina.id}, Nombre: {maquina.nombre}, Tipo: {maquina.tipo_maquina}")
-            
-            # Consultar productos por máquina
-            print(f"  Productos asociados:")
-            for producto in maquina.productos:
-                print(f"  - {producto.nombre} ({producto.tipo_cerveza}, {producto.volumen}ml)")
-        
-        # Consultar productos con insumos
-        print("\n=== PRODUCTOS E INSUMOS ===")
-        productos = ProductoCerveza.query.all()
-        for producto in productos:
-            print(f"Producto: {producto.nombre} ({producto.tipo_cerveza})")
-            print(f"  Insumos:")
-            for insumo in producto.insumos:
-                print(f"  - {insumo.nombre} ({insumo.tipo})")
                 
         # Consultar simulaciones
         print("\n=== SIMULACIONES ===")
@@ -69,6 +58,50 @@ def consultar_datos():
         for intervencion in intervenciones:
             maquina = MaquinasCerveceria.query.get(intervencion.linea_id)
             print(f"  - ID: {intervencion.id_simulacion}, Máquina: {maquina.nombre}, Fecha: {intervencion.Fecha}")
+
+        # Consultar ejercicios de Markov
+        print("\n=== EJERCICIOS DE CADENAS DE MARKOV ===")
+        ejercicios = Ejercicio.query.all()
+        for ej in ejercicios:
+            maquina = MaquinasCerveceria.query.get(ej.id_maquina)
+            usuario = Usuario.query.get(ej.id_usuario)
+            print(f"Ejercicio ID: {ej.id}")
+            print(f"  Máquina: {maquina.nombre}")
+            print(f"  Usuario: {usuario.Nombre} {usuario.ApelP_pater}")
+            print(f"  Fecha: {ej.fecha_creacion}")
+            
+            # Deserializar matriz y vector
+            matriz = np.array(json.loads(ej.matriz_estados))
+            vector = np.array(json.loads(ej.vector_inicial))
+            
+            print(f"  Matriz de transición (forma {matriz.shape}):")
+            print(matriz)
+            print(f"  Vector inicial:")
+            print(vector)
+            print("")
+        
+        # Consultas con filtros específicos para ejercicios
+        print("\n=== CONSULTAS DE EJERCICIOS CON FILTROS ===")
+        
+        # Ejercicios creados por un usuario específico
+        print("Ejercicios creados por usuario 'jperez':")
+        usuario_jperez = Usuario.query.filter_by(Usuario="jperez").first()
+        if usuario_jperez:
+            ejercicios_usuario = Ejercicio.query.filter_by(id_usuario=usuario_jperez.id_usuario).all()
+            print(f"  Encontrados {len(ejercicios_usuario)} ejercicios")
+            for ej in ejercicios_usuario:
+                maquina = MaquinasCerveceria.query.get(ej.id_maquina)
+                print(f"  - ID: {ej.id}, Máquina: {maquina.nombre}, Fecha: {ej.fecha_creacion}")
+        
+        # Ejercicios para una máquina específica
+        print("\nEjercicios para 'Línea Embotellado 1':")
+        maquina_embotellado = MaquinasCerveceria.query.filter_by(nombre="Línea Embotellado 1").first()
+        if maquina_embotellado:
+            ejercicios_maquina = Ejercicio.query.filter_by(id_maquina=maquina_embotellado.id).all()
+            print(f"  Encontrados {len(ejercicios_maquina)} ejercicios")
+            for ej in ejercicios_maquina:
+                usuario = Usuario.query.get(ej.id_usuario)
+                print(f"  - ID: {ej.id}, Usuario: {usuario.Usuario}, Fecha: {ej.fecha_creacion}")
 
 if __name__ == "__main__":
     consultar_datos()

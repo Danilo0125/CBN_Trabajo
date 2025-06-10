@@ -11,14 +11,15 @@ class MaquinasCerveceria(db.Model):
     descripcion = db.Column(db.Text)
     tipo_maquina = db.Column(db.String(50))
     frec_manteni = db.Column(db.String(50))
-
+    temp_mini = db.Column(db.Float)
+    temp_maxi = db.Column(db.Float)
+    uso_operativo = db.Column(db.Float)
+    presion_max = db.Column(db.Float)
+    criticidad = db.Column(db.String(50))
     
     # Relaciones
-    productos = db.relationship('ProductoCerveza', backref='maquina', lazy=True)
     ejercicios = db.relationship('Ejercicio', backref='maquina', lazy=True)
     simulaciones = db.relationship('SimulacionEstado', backref='linea', lazy=True)
-
-
 
 class Usuario(db.Model):
     __tablename__ = 'Usuario'
@@ -58,6 +59,7 @@ class SimulacionEstado(db.Model):
     Intervenido = db.Column(db.Boolean)
     Temperatura = db.Column(db.Float)
     Presion = db.Column(db.Float)
+    Uso = db.Column(db.Float)
     Recompensa = db.Column(db.Float)
     Comentario = db.Column(db.Text)
     vibracion = db.Column(db.Float)

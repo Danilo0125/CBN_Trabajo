@@ -3,12 +3,14 @@ Ejemplo de creación de datos en la base de datos
 """
 try:
     from database import create_app
-    from Modelos import db, MaquinasCerveceria, ProductoCerveza, InsumosCerveza, Usuario, SimulacionEstado
+    from Modelos import db, MaquinasCerveceria, Usuario, SimulacionEstado, Ejercicio
 except ImportError:
     from .database import create_app
-    from .Modelos import db, MaquinasCerveceria, ProductoCerveza, InsumosCerveza, Usuario, SimulacionEstado
+    from .Modelos import db, MaquinasCerveceria, Usuario, SimulacionEstado, Ejercicio
 
 import datetime
+import json
+import numpy as np
 
 def crear_datos_ejemplo():
     app = create_app()
@@ -88,68 +90,8 @@ def crear_datos_ejemplo():
         for maquina in maquinas:
             db.session.add(maquina)
         
-        # Realizar primer commit para obtener IDs
+        # Commit para obtener IDs
         db.session.commit()
-        
-        # Crear productos asociados a máquinas
-        print("Creando productos...")
-        productos = [
-            ProductoCerveza(
-                nombre="Cerveza Pilsener",
-                tipo_cerveza="Pilsner",
-                volumen=330.0,
-                envase="Botella",
-                maquina_id=maquinas[0].id
-            ),
-            ProductoCerveza(
-                nombre="Cerveza Negra",
-                tipo_cerveza="Stout",
-                volumen=500.0,
-                envase="Botella",
-                maquina_id=maquinas[0].id
-            ),
-            ProductoCerveza(
-                nombre="Cerveza Dorada",
-                tipo_cerveza="Lager",
-                volumen=1000.0,
-                envase="Botella",
-                maquina_id=maquinas[1].id
-            )
-        ]
-        
-        for producto in productos:
-            db.session.add(producto)
-        
-        # Realizar segundo commit para obtener IDs de productos
-        db.session.commit()
-        
-        # Crear insumos asociados a productos
-        print("Creando insumos...")
-        insumos = [
-            InsumosCerveza(
-                nombre="Malta Pilsner",
-                tipo="Malta",
-                producto_id=productos[0].id_producto
-            ),
-            InsumosCerveza(
-                nombre="Lúpulo Saaz",
-                tipo="Lúpulo",
-                producto_id=productos[0].id_producto
-            ),
-            InsumosCerveza(
-                nombre="Malta Tostada",
-                tipo="Malta",
-                producto_id=productos[1].id_producto
-            ),
-            InsumosCerveza(
-                nombre="Lúpulo Cascade",
-                tipo="Lúpulo",
-                producto_id=productos[2].id_producto
-            )
-        ]
-        
-        for insumo in insumos:
-            db.session.add(insumo)
         
         # Crear simulaciones
         print("Creando simulaciones...")
@@ -188,6 +130,51 @@ def crear_datos_ejemplo():
         
         for simulacion in simulaciones:
             db.session.add(simulacion)
+        
+        # Crear ejercicios de Markov
+        print("Creando ejercicios de cadenas de Markov...")
+        
+        # Matriz de ejemplo para 4 estados: Muy bueno, bueno, medio, malo
+        matriz_ejemplo_1 = np.array([
+            [0.7, 0.2, 0.1, 0.0],  # Transiciones desde Muy bueno
+            [0.3, 0.5, 0.2, 0.0],  # Transiciones desde bueno
+            [0.0, 0.3, 0.5, 0.2],  # Transiciones desde medio
+            [0.0, 0.0, 0.4, 0.6]   # Transiciones desde malo
+        ])
+        
+        # Vector inicial (empezando en estado "bueno")
+        vector_inicial_1 = np.array([0.0, 1.0, 0.0, 0.0])
+        
+        # Segunda matriz de ejemplo con diferente comportamiento
+        matriz_ejemplo_2 = np.array([
+            [0.8, 0.2, 0.0, 0.0],  # Mejores probabilidades de mantener estado Muy bueno
+            [0.4, 0.5, 0.1, 0.0],  # Mejores probabilidades de pasar a Muy bueno desde bueno
+            [0.1, 0.4, 0.4, 0.1],  # Mejores probabilidades de mejorar desde medio
+            [0.0, 0.1, 0.5, 0.4]   # Mejores probabilidades de mejorar desde malo
+        ])
+        
+        # Vector inicial (empezando en estado "medio")
+        vector_inicial_2 = np.array([0.0, 0.0, 1.0, 0.0])
+        
+        ejercicios = [
+            Ejercicio(
+                id_usuario=usuarios[1].id_usuario,  # jperez
+                id_maquina=maquinas[0].id,  # Línea Embotellado 1
+                fecha_creacion=datetime.datetime.now(),
+                matriz_estados=json.dumps(matriz_ejemplo_1.tolist()),
+                vector_inicial=json.dumps(vector_inicial_1.tolist())
+            ),
+            Ejercicio(
+                id_usuario=usuarios[2].id_usuario,  # mgonzalez
+                id_maquina=maquinas[1].id,  # Fermentador A
+                fecha_creacion=datetime.datetime.now(),
+                matriz_estados=json.dumps(matriz_ejemplo_2.tolist()),
+                vector_inicial=json.dumps(vector_inicial_2.tolist())
+            )
+        ]
+        
+        for ejercicio in ejercicios:
+            db.session.add(ejercicio)
         
         # Commit final
         db.session.commit()

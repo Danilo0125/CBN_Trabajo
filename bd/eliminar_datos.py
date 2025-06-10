@@ -3,10 +3,10 @@ Ejemplo de eliminación de datos en la base de datos
 """
 try:
     from database import create_app
-    from Modelos import db, MaquinasCerveceria, ProductoCerveza, InsumosCerveza, Usuario, SimulacionEstado
+    from Modelos import db, MaquinasCerveceria, Usuario, SimulacionEstado, Ejercicio
 except ImportError:
     from .database import create_app
-    from .Modelos import db, MaquinasCerveceria, ProductoCerveza, InsumosCerveza, Usuario, SimulacionEstado
+    from .Modelos import db, MaquinasCerveceria, Usuario, SimulacionEstado, Ejercicio
 
 def eliminar_datos():
     app = create_app()
@@ -38,65 +38,7 @@ def eliminar_datos():
         else:
             print("No se encontraron simulaciones para eliminar")
         
-        # 2. Eliminar un insumo
-        print("\nEliminando un insumo...")
-        
-        # Buscar un insumo específico
-        insumo = InsumosCerveza.query.filter_by(nombre="Lúpulo Saaz").first()
-        
-        if insumo:
-            print(f"Eliminando insumo: {insumo.nombre} (ID: {insumo.id_insumo})")
-            
-            # Guardar ID para verificación
-            insumo_id = insumo.id_insumo
-            
-            # Eliminar el insumo
-            db.session.delete(insumo)
-            db.session.commit()
-            
-            # Verificar eliminación
-            insumo_verificacion = InsumosCerveza.query.get(insumo_id)
-            if insumo_verificacion is None:
-                print(f"✅ Insumo ID {insumo_id} eliminado correctamente")
-            else:
-                print(f"❌ Error: El insumo ID {insumo_id} no se eliminó correctamente")
-        else:
-            print("No se encontró el insumo especificado")
-        
-        # 3. Eliminar todos los productos de cierto tipo
-        print("\nEliminando productos por tipo...")
-        
-        # Contar productos de tipo Stout antes de eliminar
-        productos_stout = ProductoCerveza.query.filter_by(tipo_cerveza="Stout").all()
-        
-        if productos_stout:
-            print(f"Encontrados {len(productos_stout)} productos tipo Stout")
-            
-            # Primero debemos eliminar los insumos asociados para evitar violaciones de restricciones de clave foránea
-            for producto in productos_stout:
-                # Obtener y eliminar insumos asociados
-                insumos_asociados = InsumosCerveza.query.filter_by(producto_id=producto.id_producto).all()
-                for insumo in insumos_asociados:
-                    print(f"  Eliminando insumo asociado: {insumo.nombre}")
-                    db.session.delete(insumo)
-                
-                # Ahora podemos eliminar el producto
-                print(f"  Eliminando producto: {producto.nombre}")
-                db.session.delete(producto)
-            
-            # Commit para confirmar todas las eliminaciones
-            db.session.commit()
-            
-            # Verificar eliminación
-            productos_verificacion = ProductoCerveza.query.filter_by(tipo_cerveza="Stout").all()
-            if len(productos_verificacion) == 0:
-                print(f"✅ Todos los productos Stout fueron eliminados correctamente")
-            else:
-                print(f"❌ Error: Algunos productos Stout no se eliminaron. Quedan: {len(productos_verificacion)}")
-        else:
-            print("No se encontraron productos tipo Stout")
-        
-        # 4. Eliminar usuario (verificando primero relaciones)
+        # 2. Eliminar usuario (verificando primero relaciones)
         print("\nEliminando usuario...")
         
         # Encontrar usuario
@@ -117,6 +59,18 @@ def eliminar_datos():
                 
                 print(f"  {len(simulaciones_asociadas)} simulaciones eliminadas")
             
+            # Verificar si tiene ejercicios asociados
+            ejercicios_asociados = Ejercicio.query.filter_by(id_usuario=usuario.id_usuario).all()
+            
+            if ejercicios_asociados:
+                print(f"  El usuario tiene {len(ejercicios_asociados)} ejercicios asociados")
+                print("  Eliminando ejercicios asociados...")
+                
+                for ejercicio in ejercicios_asociados:
+                    db.session.delete(ejercicio)
+                
+                print(f"  {len(ejercicios_asociados)} ejercicios eliminados")
+            
             # Ahora podemos eliminar el usuario
             usuario_id = usuario.id_usuario
             db.session.delete(usuario)
@@ -130,6 +84,36 @@ def eliminar_datos():
                 print(f"❌ Error: El usuario ID {usuario_id} no se eliminó correctamente")
         else:
             print("No se encontró el usuario especificado")
+        
+        # 3. Eliminar ejercicio de Markov
+        print("\nEliminando ejercicio de cadena de Markov...")
+        
+        # Buscar el ejercicio más antiguo
+        ejercicio = Ejercicio.query.order_by(Ejercicio.fecha_creacion.asc()).first()
+        
+        if ejercicio:
+            maquina = MaquinasCerveceria.query.get(ejercicio.id_maquina)
+            usuario = Usuario.query.get(ejercicio.id_usuario)
+            print(f"Eliminando ejercicio ID: {ejercicio.id}")
+            print(f"  Creado por: {usuario.Usuario}")
+            print(f"  Máquina: {maquina.nombre}")
+            print(f"  Fecha: {ejercicio.fecha_creacion}")
+            
+            # Guardar ID para verificación posterior
+            ejercicio_id = ejercicio.id
+            
+            # Eliminar el ejercicio
+            db.session.delete(ejercicio)
+            db.session.commit()
+            
+            # Verificar que se haya eliminado
+            ejercicio_verificacion = Ejercicio.query.get(ejercicio_id)
+            if ejercicio_verificacion is None:
+                print(f"✅ Ejercicio ID {ejercicio_id} eliminado correctamente")
+            else:
+                print(f"❌ Error: El ejercicio ID {ejercicio_id} no se eliminó correctamente")
+        else:
+            print("No se encontraron ejercicios para eliminar")
 
 if __name__ == "__main__":
     eliminar_datos()
