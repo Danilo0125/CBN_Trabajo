@@ -2,17 +2,21 @@
 Ejemplo de creación de datos en la base de datos
 """
 try:
-    from database import create_app
+    from database import create_app, init_db
     from Modelos import db, MaquinasCerveceria, Usuario, SimulacionEstado, Ejercicio
 except ImportError:
-    from .database import create_app
+    from .database import create_app, init_db
     from .Modelos import db, MaquinasCerveceria, Usuario, SimulacionEstado, Ejercicio
 
 import datetime
 import json
 import numpy as np
 
-def crear_datos_ejemplo():
+def crear_datos_ejemplo(drop_all=False):
+    # Initialize the database and create tables
+    print("Inicializando la base de datos...")
+    init_db(drop_all=drop_all)
+    
     app = create_app()
     
     with app.app_context():
@@ -181,4 +185,11 @@ def crear_datos_ejemplo():
         print("Datos de ejemplo creados con éxito.")
 
 if __name__ == "__main__":
-    crear_datos_ejemplo()
+    import sys
+    # Check if --reset flag is passed to drop all tables and recreate them
+    drop_all = "--reset" in sys.argv
+    crear_datos_ejemplo(drop_all=drop_all)
+    
+    if drop_all:
+        print("\n¡ATENCIÓN! Se han eliminado y recreado todas las tablas.")
+    print("\nPara recrear completamente la base de datos, ejecute este script con la opción --reset")

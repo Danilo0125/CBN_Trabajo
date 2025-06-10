@@ -14,7 +14,8 @@ def get_database_uri():
     password = '12345678'
     host = 'localhost'
     port = '5432'
-    database = 'cbn_ejemplo'
+    # Fix database name - remove spaces and use a valid name
+    database = 'Inteligencia2_Investigacion2'
     
     return f'postgresql://{username}:{password}@{host}:{port}/{database}'
 
@@ -32,16 +33,20 @@ def ensure_database_exists():
         conn.autocommit = True
         cursor = conn.cursor()
         
+        # Use a valid database name without spaces
+        db_name = 'Inteligencia2_Investigacion2'
+        
         # Check if database exists
-        cursor.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'cbn_ejemplo'")
+        cursor.execute(f"SELECT 1 FROM pg_catalog.pg_database WHERE datname = '{db_name}'")
         exists = cursor.fetchone()
         
         if not exists:
-            print("Creating database 'cbn_ejemplo'...")
-            cursor.execute("CREATE DATABASE cbn_ejemplo")
+            print(f"Creating database '{db_name}'...")
+            # Use the proper syntax for creating a database
+            cursor.execute(f'CREATE DATABASE "{db_name}"')
             print("Database created successfully!")
         else:
-            print("Database 'cbn_ejemplo' already exists.")
+            print(f"Database '{db_name}' already exists.")
         
         cursor.close()
         conn.close()
