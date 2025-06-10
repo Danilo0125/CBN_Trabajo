@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 import os
+import sys
+
+# Add the IAs directory to the Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'IAs'))
 
 # Importar módulos refactorizados
 from config import Config
@@ -8,6 +12,9 @@ from routes.sensores_routes import web_blueprint
 from routes.api_routes import api_blueprint
 from routes.markov_routes import markov_blueprint
 from socket_events import setup_socket_events
+
+# Load the predictive model
+from modelo_predictivo import modelo_prediccion
 
 # Variables globales (se pueden mover a un módulo de estado si crece más)
 datos_recientes = []
@@ -49,6 +56,7 @@ if __name__ == '__main__':
     
     print(f"Iniciando servidor en http://{Config.HOST}:{Config.PORT}")
     print(f"Accede al dashboard en tu navegador con la URL http://localhost:{Config.PORT}")
+    print(f"Modelo predictivo cargado: {'Sí' if modelo_prediccion.model is not None else 'No'}")
     
     # Iniciar el servidor Flask-SocketIO
     socketio.run(app, host=Config.HOST, port=Config.PORT, debug=Config.DEBUG)
