@@ -187,7 +187,7 @@ def enviar_datos_sensores():
                             # Si está apagada, disminuir gradualmente hacia cero
                             for sensor in valores_actuales:
                                 # Usar pasos más grandes para que la caída sea más rápida pero aún gradual
-                                paso = 1.0 if sensor == 'temperatura' else 0.4 if sensor == 'presion' else 0.6
+                                paso = 1.0 if sensor == 'temperatura' else 10 if sensor == 'presion' else 0.6
                                 valores_actuales[sensor] = calcular_valor_gradual(
                                     valores_actuales[sensor],
                                     0,  # El objetivo es cero
