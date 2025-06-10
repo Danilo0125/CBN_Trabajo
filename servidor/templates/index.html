@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBN - Sistema de Monitoreo Inteligente</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cerveza': '#FFCC33',
+            'cebada': '#C1994D',
+            'espuma': '#FFF3E0',
+            'malta': '#8B4513',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-espuma text-gray-900 font-sans">
+  <div class="relative min-h-screen">
+    <!-- Hero Section with Background Image -->
+    <div class="absolute inset-0">
+      <img class="w-full h-full object-cover" src="/static/images/cbn_bg.jpg" alt="CBN Background">
+      <div class="absolute inset-0 bg-black opacity-70"></div>
+    </div>
+    
+    <div class="relative flex flex-col items-center justify-center min-h-screen px-4">
+      <!-- Logo -->
+      <div class="mb-8">
+        <img class="h-32 w-auto" src="/static/images/logo.png" alt="CBN Logo">
+      </div>
+      
+      <h1 class="text-5xl font-extrabold tracking-tight text-white mb-6 text-center">
+        Cervecería Boliviana Nacional
+      </h1>
+      
+      <h2 class="text-3xl font-bold text-cerveza mb-8 text-center">
+        Sistema de Monitoreo Inteligente
+      </h2>
+      
+      <p class="text-xl text-gray-300 max-w-3xl text-center mb-12">
+        Monitoreo y predicción de estados de máquinas mediante cadenas de Markov e inteligencia artificial
+      </p>
+      
+      <a href="/cadena-markov" class="bg-cerveza hover:bg-cebada text-white text-xl font-bold py-4 px-8 rounded-lg transition-colors duration-300">
+        Ingresar al Sistema
+      </a>
+      
+      <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl">
+        <div class="bg-white bg-opacity-10 p-6 rounded-lg backdrop-blur-sm">
+          <div class="text-cerveza text-4xl mb-4 flex justify-center">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3 class="text-white text-xl font-bold mb-2 text-center">Cadenas de Markov</h3>
+          <p class="text-gray-300 text-center">Modelado probabilístico para predecir estados futuros de máquinas</p>
+        </div>
+        
+        <div class="bg-white bg-opacity-10 p-6 rounded-lg backdrop-blur-sm">
+          <div class="text-cerveza text-4xl mb-4 flex justify-center">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h3 class="text-white text-xl font-bold mb-2 text-center">Inteligencia Artificial</h3>
+          <p class="text-gray-300 text-center">Detección de patrones anómalos y toma de decisiones automatizada</p>
+        </div>
+        
+        <div class="bg-white bg-opacity-10 p-6 rounded-lg backdrop-blur-sm">
+          <div class="text-cerveza text-4xl mb-4 flex justify-center">
+            <i class="fas fa-cogs"></i>
+          </div>
+          <h3 class="text-white text-xl font-bold mb-2 text-center">Control Remoto</h3>
+          <p class="text-gray-300 text-center">Capacidad de detener máquinas a distancia en caso de anomalías</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="relative text-center text-gray-400 py-8">
+      <p>&copy; 2023 Cervecería Boliviana Nacional. Todos los derechos reservados.</p>
+    </footer>
+  </div>
+</body>
+</html>
