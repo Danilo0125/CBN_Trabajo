@@ -177,7 +177,7 @@ def enviar_datos_sensores():
                         if maquina_encendida:
                             # Ajustar gradualmente hacia valores normales
                             for sensor in valores_actuales:
-                                paso = 0.5 if sensor == 'temperatura' else 0.2 if sensor == 'presion' else 0.3
+                                paso = 0.5 if sensor == 'temperatura' else 5 if sensor == 'presion' else 0.3
                                 valores_actuales[sensor] = calcular_valor_gradual(
                                     valores_actuales[sensor], 
                                     valores_normales[sensor], 
