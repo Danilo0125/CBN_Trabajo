@@ -17,9 +17,9 @@ class Config:
 def generar_datos_tiempo_real():
     return {
         'timestamp': datetime.now().isoformat(),
-        'temperatura': random.uniform(50, 60),
-        'vibracion': random.uniform(2, 4),
-        'presion': random.uniform(2, 3)
+        'temperatura': random.uniform(25, 35),
+        'vibracion': random.uniform(1.5, 2.7),
+        'presion': random.uniform(90, 130)
     }
 
 # Crear cliente Socket.IO
@@ -106,14 +106,14 @@ def simular_valores_falla():
     nuevos_valores = valores_actuales.copy()
     
     if tipo_falla == 'temperatura':
-        nuevos_valores['temperatura'] = min(85, valores_actuales['temperatura'] + random.uniform(0.5, 1.5))
+        nuevos_valores['temperatura'] = min(100, valores_actuales['temperatura'] + random.uniform(0.5, 1.5))
         nuevos_valores['vibracion'] = min(8, valores_actuales['vibracion'] + random.uniform(0.1, 0.3))
-        nuevos_valores['presion'] = min(4.5, valores_actuales['presion'] + random.uniform(0.05, 0.15))
+        nuevos_valores['presion'] = min(200, valores_actuales['presion'] + random.uniform(1, 5))
     elif tipo_falla == 'vibracion':
         nuevos_valores['vibracion'] = min(12, valores_actuales['vibracion'] + random.uniform(0.3, 0.8))
         nuevos_valores['temperatura'] = min(70, valores_actuales['temperatura'] + random.uniform(0.2, 0.5))
     elif tipo_falla == 'presion':
-        nuevos_valores['presion'] = min(5.5, valores_actuales['presion'] + random.uniform(0.1, 0.3))
+        nuevos_valores['presion'] = min(250, valores_actuales['presion'] + random.uniform(2, 7))
         nuevos_valores['temperatura'] = min(70, valores_actuales['temperatura'] + random.uniform(0.2, 0.4))
     
     return nuevos_valores

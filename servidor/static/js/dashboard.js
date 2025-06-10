@@ -200,16 +200,16 @@ const pressureChart = new Chart(document.getElementById('pressureChart'), {
  */
 const LIMITES = {
     temperatura: {
-        advertencia: 65,
-        critico: 75
+        advertencia: 70,
+        critico: 85
     },
     vibracion: {
         advertencia: 7,
         critico: 9
     },
     presion: {
-        advertencia: 4.2,
-        critico: 4.8
+        advertencia: 150,
+        critico: 200
     }
 };
 
