@@ -31,6 +31,101 @@ const pressureValue = document.getElementById('pressure-value');
 const powerButton = document.getElementById('power-button');
 const powerText = document.getElementById('power-text');
 
+// Elementos DOM para el panel de predicción IA
+const aiActionIcon = document.getElementById('ai-action-icon');
+const aiActionText = document.getElementById('ai-action-text');
+const aiRiskBar = document.getElementById('ai-risk-bar');
+const aiRiskLevel = document.getElementById('ai-risk-level');
+const aiCriticalIcon = document.getElementById('ai-critical-icon');
+const aiCriticalText = document.getElementById('ai-critical-text');
+
+/**
+ * Actualiza el panel de predicción de IA con los resultados del modelo
+ */
+function actualizarPrediccionIA(prediccion) {
+    if (!prediccion) {
+        // Sin datos de predicción
+        return;
+    }
+
+    // Actualizar la acción recomendada
+    if (prediccion.action === 1) {
+        // Mantenimiento preventivo
+        aiActionIcon.className = 'w-8 h-8 flex-shrink-0 mr-3 flex items-center justify-center rounded-full bg-yellow-100';
+        aiActionIcon.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+            </svg>
+        `;
+        aiActionText.textContent = 'Mantenimiento preventivo';
+        aiActionText.className = 'text-lg font-medium text-yellow-600';
+    } else {
+        // Continuar operación normal
+        aiActionIcon.className = 'w-8 h-8 flex-shrink-0 mr-3 flex items-center justify-center rounded-full bg-green-100';
+        aiActionIcon.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+        `;
+        aiActionText.textContent = 'Continuar operación normal';
+        aiActionText.className = 'text-lg font-medium text-green-600';
+    }
+
+    // Calcular nivel de riesgo basado en los datos del sensor
+    const riskFactors = {
+        temperature: prediccion.raw_data[0] / 100, // Normalizado a 0-1 (máx 100°C)
+        vibration: prediccion.raw_data[1] / 10,    // Normalizado a 0-1 (máx 10 mm/s)
+        pressure: prediccion.raw_data[2] / 500     // Normalizado a 0-1 (máx 500 bar)
+    };
+    
+    // Ponderación: temperatura (40%), vibración (40%), presión (20%)
+    const riskScore = (riskFactors.temperature * 0.4) + 
+                      (riskFactors.vibration * 0.4) + 
+                      (riskFactors.pressure * 0.2);
+    
+    // Convertir a porcentaje para la barra de riesgo
+    const riskPercentage = Math.min(Math.round(riskScore * 100), 100);
+    
+    // Actualizar barra de riesgo
+    aiRiskBar.style.width = `${riskPercentage}%`;
+    
+    // Definir color según el nivel de riesgo
+    if (riskPercentage < 30) {
+        aiRiskBar.className = 'bg-green-500 h-4 rounded-full';
+        aiRiskLevel.textContent = 'Bajo';
+        aiRiskLevel.className = 'text-xs font-medium text-green-500';
+    } else if (riskPercentage < 70) {
+        aiRiskBar.className = 'bg-yellow-500 h-4 rounded-full';
+        aiRiskLevel.textContent = 'Medio';
+        aiRiskLevel.className = 'text-xs font-medium text-yellow-500';
+    } else {
+        aiRiskBar.className = 'bg-red-500 h-4 rounded-full';
+        aiRiskLevel.textContent = 'Alto';
+        aiRiskLevel.className = 'text-xs font-medium text-red-500';
+    }
+
+    // Actualizar estado crítico
+    if (prediccion.is_critical) {
+        aiCriticalIcon.className = 'w-8 h-8 flex-shrink-0 mr-3 flex items-center justify-center rounded-full bg-red-100';
+        aiCriticalIcon.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+        `;
+        aiCriticalText.textContent = '¡Detectado! Intervención requerida';
+        aiCriticalText.className = 'text-lg font-medium text-red-600';
+    } else {
+        aiCriticalIcon.className = 'w-8 h-8 flex-shrink-0 mr-3 flex items-center justify-center rounded-full bg-green-100';
+        aiCriticalIcon.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+        `;
+        aiCriticalText.textContent = 'No detectado';
+        aiCriticalText.className = 'text-lg font-medium text-green-600';
+    }
+}
+
 /**
  * Carga los datos iniciales desde el servidor
  */
@@ -491,6 +586,11 @@ socket.on('nuevos_datos', (data) => {
 
     // Verificar si hay valores que requieren alertas
     verificarAlertas(data);
+
+    // Actualizar panel de predicción de IA si hay datos de predicción
+    if (data.prediccion) {
+        actualizarPrediccionIA(data.prediccion);
+    }
 
     // Agregar datos a los arrays para los gráficos
     const time = new Date(data.timestamp).toLocaleTimeString();

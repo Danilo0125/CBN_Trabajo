@@ -1,5 +1,6 @@
 import time
 from config import Config
+from modelo_predictivo import modelo_prediccion
 
 def setup_socket_events(socketio, datos_recientes, sensor_activo, maquina_encendida, 
                         proximo_envio, ultimo_heartbeat, TIMEOUT_SENSOR):
@@ -56,6 +57,22 @@ def setup_socket_events(socketio, datos_recientes, sensor_activo, maquina_encend
             # Mantener solo los últimos N puntos
             if len(datos_recientes) > Config.MAX_DATA_POINTS:
                 datos_recientes.pop(0)
+            
+            # Procesar datos con modelo predictivo
+            if 'temperatura' in datos and 'vibracion' in datos and 'presion' in datos:
+                sensor_values = [datos['temperatura'], datos['vibracion'], datos['presion']]
+                prediction = modelo_prediccion.predict(sensor_values)
+                
+                # Mostrar predicción en la consola
+                print("\n----- PREDICCIÓN DEL MODELO -----")
+                print(f"Datos: Temp={sensor_values[0]}°C, Vibración={sensor_values[1]}, Presión={sensor_values[2]}")
+                print(f"Acción recomendada: {prediction['action_explanation']}")
+                if prediction['is_critical']:
+                    print("¡ALERTA CRÍTICA! Se recomienda intervención inmediata.")
+                print("--------------------------------\n")
+                
+                # Añadir predicción a los datos para enviar al cliente
+                datos['prediccion'] = prediction
             
             # Enviar datos a todos los clientes conectados
             socketio.emit('nuevos_datos', datos)
