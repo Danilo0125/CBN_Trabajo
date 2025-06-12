@@ -41,11 +41,13 @@ setup_socket_events(socketio, datos_recientes, sensor_activo, maquina_encendida,
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('CadenaMarkov.html', mensaje="Página no encontrada"), 404
+    # Eliminamos la parte del mensaje que genera el banner amarillo
+    return render_template('CadenaMarkov.html'), 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('CadenaMarkov.html', mensaje="Error interno del servidor"), 500
+    # Eliminamos la parte del mensaje que genera el banner amarillo
+    return render_template('CadenaMarkov.html'), 500
 
 ### Iniciar el servidor Flask-SocketIO
 if __name__ == '__main__':
