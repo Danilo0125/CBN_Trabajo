@@ -2,6 +2,9 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 import os
 import sys
+import random
+import time
+from datetime import datetime
 
 from config import Config
 from routes.sensores_routes import web_blueprint
@@ -43,6 +46,12 @@ app.register_blueprint(maquina_blueprint, name='maquinas')
 app.register_blueprint(markov_blueprint, name='markov')
 app.register_blueprint(monitoreo_blueprint, name='monitoreo')  # Nuevo blueprint
 
+# Importar el registrador de rutas de simulación
+from routes.simulacion_rutas import registrar_rutas_simulacion
+
+# Registrar rutas (agregar esto donde registras otras rutas)
+registrar_rutas_simulacion(app)
+
 # Inicializar Socket.IO
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
@@ -62,6 +71,46 @@ def internal_server_error(e):
 with app.app_context():
     db.create_all()
     print("Tablas de base de datos verificadas/creadas")
+
+def generar_datos_simulacion():
+    """
+    Genera datos simulados para los sensores y los guarda en la variable global
+    datos_recientes para que estén disponibles a través de la API
+    """
+    # Generar datos simulados
+    timestamp = datetime.now().isoformat()
+    temperatura = round(random.uniform(50, 80), 1)  # Temperatura entre 50°C y 80°C
+    vibracion = round(random.uniform(2, 8), 2)      # Vibración entre 2 y 8 mm/s
+    presion = round(random.uniform(100, 300), 0)    # Presión entre 100 y 300 bar
+    
+    # Crear predicción simulada de IA
+    is_critical = random.random() < 0.05  # 5% de probabilidad de estado crítico
+    action = 1 if random.random() < 0.3 else 0  # 30% de probabilidad de recomendar mantenimiento
+    
+    prediccion = {
+        "action": action,
+        "is_critical": is_critical,
+        "raw_data": [temperatura, vibracion, presion],
+        "confidence": random.random()
+    }
+    
+    # Crear datos del sensor
+    datos = {
+        "timestamp": timestamp,
+        "temperatura": temperatura,
+        "vibracion": vibracion,
+        "presion": presion,
+        "prediccion": prediccion
+    }
+    
+    # Guardar en datos_recientes
+    datos_recientes.append(datos)
+    
+    # Mantener solo los últimos 1000 datos
+    if len(datos_recientes) > 1000:
+        datos_recientes.pop(0)
+    
+    return datos
 
 ### Iniciar el servidor Flask-SocketIO
 if __name__ == '__main__':

@@ -22,6 +22,10 @@ const maxDataPoints = 100; // Máximo de puntos a mostrar en los gráficos
 // Estado de la máquina - Cambiado a true por defecto
 let maquinaEncendida = true;
 
+// ID de la máquina seleccionada (si existe)
+const maquinaIdElement = document.getElementById('maquina-id');
+const maquinaId = maquinaIdElement ? maquinaIdElement.value : null;
+
 // Elementos DOM
 const statusIndicator = document.getElementById('status-indicator');
 const connectionStatus = document.getElementById('connection-status');
@@ -132,6 +136,8 @@ function actualizarPrediccionIA(prediccion) {
 async function cargarDatosIniciales() {
     try {
         console.log("Cargando datos iniciales...");
+        
+        // Cargar datos de simulación - simplificado para usar los mismos datos para cualquier máquina
         const response = await fetch('/api/datos');
         
         if (!response.ok) {
@@ -141,7 +147,7 @@ async function cargarDatosIniciales() {
         const datos = await response.json();
         
         if (datos && datos.length > 0) {
-            console.log(`Cargados ${datos.length} datos iniciales`);
+            console.log(`Cargados ${datos.length} datos iniciales de simulación`);
             // Cargar los últimos 50 datos
             const datosIniciales = datos.slice(-50);
             
@@ -163,6 +169,11 @@ async function cargarDatosIniciales() {
             tempChart.update();
             vibrationChart.update();
             pressureChart.update();
+            
+            // Si hay datos de predicción, actualizar el panel de IA
+            if (ultimoDato.prediccion) {
+                actualizarPrediccionIA(ultimoDato.prediccion);
+            }
         } else {
             console.log("No hay datos iniciales disponibles");
         }
@@ -210,8 +221,11 @@ function toggleMaquina() {
     const originalText = powerText.textContent;
     powerText.textContent = maquinaEncendida ? 'Apagando...' : 'Encendiendo...';
     
-    // Enviar comando al servidor
-    socket.emit('cambiar_estado_maquina', { encender: !maquinaEncendida }, (response) => {
+    // Enviar comando al servidor incluyendo el ID de la máquina
+    socket.emit('cambiar_estado_maquina', { 
+        encender: !maquinaEncendida,
+        id_maquina: maquinaId  // Incluir ID de la máquina si existe
+    }, (response) => {
         // Callback cuando el servidor responde (opcional)
         if (response && response.success) {
             console.log(`Máquina ${response.estado} correctamente`);
@@ -479,6 +493,12 @@ socket.on('connect', () => {
     statusIndicator.className = 'w-3 h-3 bg-green-500 rounded-full mr-2';
     connectionStatus.textContent = 'Conectado';
     
+    // Si hay una máquina seleccionada, unirse a su canal específico
+    if (maquinaId) {
+        socket.emit('join', { room: `maquina_${maquinaId}` });
+        console.log(`Unido al canal de la máquina ${maquinaId}`);
+    }
+    
     // Cargar datos iniciales cuando se conecta
     cargarDatosIniciales();
 });
@@ -594,6 +614,9 @@ function mostrarNotificacion(mensaje, tipo = 'info', duracion = 3000) {
 
 // Evento para nuevos datos de sensores
 socket.on('nuevos_datos', (data) => {
+    // Ya no filtrar por máquina, usar todos los datos para todas las máquinas
+    // Cada máquina mostrará los mismos datos de simulación
+    
     // Limitar actualizaciones de UI para evitar sobrecarga del navegador
     // Solo actualizar los valores numéricos en cada dato recibido
     tempValue.textContent = `${data.temperatura}°C`;
@@ -640,6 +663,11 @@ powerButton.addEventListener('click', toggleMaquina);
 document.addEventListener('DOMContentLoaded', () => {
     // Actualizar el botón inmediatamente para mostrar "Apagar Máquina"
     actualizarBotonEncendido(maquinaEncendida);
+    
+    // Si hay una máquina seleccionada, mostrar su nombre en el título de la página
+    if (maquinaId) {
+        document.title = `Dashboard - Máquina ${maquinaId}`;
+    }
     
     // Cargar datos iniciales
     setTimeout(cargarDatosIniciales, 1000);
