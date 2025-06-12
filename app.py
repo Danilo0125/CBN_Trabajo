@@ -3,9 +3,6 @@ from flask_socketio import SocketIO
 import os
 import sys
 
-# Add the IAs directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'IAs'))
-
 # Importar módulos refactorizados
 from config import Config
 from routes.sensores_routes import web_blueprint

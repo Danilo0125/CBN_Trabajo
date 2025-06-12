@@ -11,33 +11,15 @@ class MaquinasCerveceria(db.Model):
     descripcion = db.Column(db.Text)
     tipo_maquina = db.Column(db.String(50))
     frec_manteni = db.Column(db.String(50))
-
+    temp_mini = db.Column(db.Float)
+    temp_maxi = db.Column(db.Float)
+    uso_operativo = db.Column(db.Float)
+    presion_max = db.Column(db.Float)
+    criticidad = db.Column(db.String(50))
     
     # Relaciones
-    productos = db.relationship('ProductoCerveza', backref='maquina', lazy=True)
-    predicciones = db.relationship('PrediceEstado', backref='linea', lazy=True)
+    ejercicios = db.relationship('Ejercicio', backref='maquina', lazy=True)
     simulaciones = db.relationship('SimulacionEstado', backref='linea', lazy=True)
-
-class ProductoCerveza(db.Model):
-    __tablename__ = 'Producto_Cerveza'
-    
-    id_producto = db.Column(db.BigInteger, primary_key=True)
-    nombre = db.Column(db.String(100))
-    tipo_cerveza = db.Column(db.String(50))
-    volumen = db.Column(db.Float)
-    envase = db.Column(db.String(50))
-    maquina_id = db.Column(db.BigInteger, db.ForeignKey('Maquinas_Cerveceria.id'))
-    
-    # Relaciones
-    insumos = db.relationship('InsumosCerveza', backref='producto', lazy=True)
-
-class InsumosCerveza(db.Model):
-    __tablename__ = 'Insumos_Cerveza'
-    
-    id_insumo = db.Column(db.BigInteger, primary_key=True)
-    nombre = db.Column(db.String(100))
-    tipo = db.Column(db.String(50))
-    producto_id = db.Column(db.BigInteger, db.ForeignKey('Producto_Cerveza.id_producto'))
 
 class Usuario(db.Model):
     __tablename__ = 'Usuario'
@@ -51,18 +33,18 @@ class Usuario(db.Model):
     Password = db.Column(db.String(100))
     
     # Relaciones
-    predicciones = db.relationship('PrediceEstado', backref='usuario', lazy=True)
+    ejercicios = db.relationship('Ejercicio', backref='usuario', lazy=True)
     simulaciones = db.relationship('SimulacionEstado', backref='usuario', lazy=True)
 
-class PrediceEstado(db.Model):
-    __tablename__ = 'Predice_Estado'
+class Ejercicio(db.Model):
+    __tablename__ = 'Ejercicio'
     
-    id_predice = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     id_usuario = db.Column(db.BigInteger, db.ForeignKey('Usuario.id_usuario'))
-    id_linea = db.Column(db.BigInteger, db.ForeignKey('Maquinas_Cerveceria.id'))
-    Estado_espe = db.Column(db.String(50))
-    Estado_calcu = db.Column(db.String(50))
-    EstadoCual = db.Column(db.Float)
+    id_maquina = db.Column(db.BigInteger, db.ForeignKey('Maquinas_Cerveceria.id'))
+    fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
+    matriz_estados = db.Column(db.Text)  # Almacenado como JSON o serializado
+    vector_inicial = db.Column(db.Text)  # Almacenado como JSON o serializado
 
 class SimulacionEstado(db.Model):
     __tablename__ = 'Simulacion_estado'
@@ -80,4 +62,4 @@ class SimulacionEstado(db.Model):
     Uso = db.Column(db.Float)
     Recompensa = db.Column(db.Float)
     Comentario = db.Column(db.Text)
-    vibracion = db.Column(db.Float) 
+    vibracion = db.Column(db.Float)
