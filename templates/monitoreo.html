@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBN - Monitoreo</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cerveza': '#FFCC33',
+            'cebada': '#C1994D',
+            'espuma': '#FFF3E0',
+            'malta': '#8B4513',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-espuma text-gray-900 font-sans">
+  <!-- Top Navigation -->
+  <nav class="bg-cebada text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <!-- Logo -->
+          <div class="flex-shrink-0 flex items-center">
+            <img class="h-10 w-auto" src="/static/images/logo.png" alt="CBN Logo">
+            <span class="ml-2 text-xl font-bold">CBN Sistema</span>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex md:items-center md:space-x-4">
+          <a href="/" class="px-3 py-2 text-sm font-medium hover:bg-cerveza text-white rounded-md transition duration-150">Inicio</a>
+          <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-markov">Cadenas de Markov</a>
+          <a href="{{ url_for('markov.listar_ejercicios') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-ejercicios">Ejercicios</a>
+          <a href="{{ url_for('maquinas.listar_maquinas') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-maquinas">Máquinas</a>
+          <a href="/monitoreo" class="px-3 py-2 text-sm font-medium nav-item" id="nav-monitoreo">Monitoreo</a>
+          <a href="/seguimiento" class="px-3 py-2 text-sm font-medium nav-item" id="nav-seguimiento">Seguimiento</a>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button id="hamburger" type="button" class="text-white focus:outline-none">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="/" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
+        <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-markov">Cadenas de Markov</a>
+        <a href="{{ url_for('markov.listar_ejercicios') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-ejercicios">Ejercicios</a>
+        <a href="{{ url_for('maquinas.listar_maquinas') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-maquinas">Máquinas</a>
+        <a href="/monitoreo" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-monitoreo">Monitoreo</a>
+        <a href="/seguimiento" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-seguimiento">Seguimiento</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pb-12">
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-gray-900">Panel de Monitoreo</h1>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-6 text-cebada">Monitoreo en Tiempo Real</h2>
+        
+        <p class="text-gray-700 mb-6">Esta página mostrará el monitoreo en tiempo real de las máquinas en funcionamiento.</p>
+        
+        <!-- Aquí irían los gráficos y paneles de monitoreo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="bg-espuma p-4 rounded-lg border border-cebada">
+            <h3 class="text-cebada font-bold mb-2">Temperatura</h3>
+            <div class="h-40 bg-gray-200 rounded flex items-center justify-center">
+              <p class="text-gray-500">Gráfico de temperatura</p>
+            </div>
+          </div>
+          <div class="bg-espuma p-4 rounded-lg border border-cebada">
+            <h3 class="text-cebada font-bold mb-2">Presión</h3>
+            <div class="h-40 bg-gray-200 rounded flex items-center justify-center">
+              <p class="text-gray-500">Gráfico de presión</p>
+            </div>
+          </div>
+          <div class="bg-espuma p-4 rounded-lg border border-cebada">
+            <h3 class="text-cebada font-bold mb-2">Vibración</h3>
+            <div class="h-40 bg-gray-200 rounded flex items-center justify-center">
+              <p class="text-gray-500">Gráfico de vibración</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Activar ítem en el nav principal
+      document.getElementById('nav-monitoreo').classList.add('bg-cerveza');
+      document.getElementById('mobile-nav-monitoreo').classList.add('bg-cerveza');
+      
+      // Hamburger menu toggle
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      hamburger.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+    });
+  </script>
+</body>
+</html>

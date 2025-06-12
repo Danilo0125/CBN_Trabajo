@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBN - Editar Máquina</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cerveza': '#FFCC33',
+            'cebada': '#C1994D',
+            'espuma': '#FFF3E0',
+            'malta': '#8B4513',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-espuma text-gray-900 font-sans">
+  <!-- Top Navigation -->
+  <nav class="bg-cebada text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <!-- Logo -->
+          <div class="flex-shrink-0 flex items-center">
+            <img class="h-10 w-auto" src="/static/images/logo.png" alt="CBN Logo">
+            <span class="ml-2 text-xl font-bold">CBN Sistema</span>
+          </div>
+        </div>
+        
+        <!-- Desktop Navigation - Ahora a la derecha -->
+        <div class="hidden md:flex md:items-center md:space-x-4">
+          <a href="{{ url_for('maquinas.listar_maquinas') }}" class="px-3 py-2 text-sm font-medium hover:bg-cerveza text-white rounded-md">Listado</a>
+          <a href="{{ url_for('maquinas.mostrar_formulario_maquina') }}" class="px-3 py-2 text-sm font-medium hover:bg-cerveza text-white rounded-md">Registrar</a>
+          <a href="/" class="px-3 py-2 text-sm font-medium hover:bg-cerveza text-white rounded-md">Inicio</a>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button id="hamburger" type="button" class="text-white focus:outline-none">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="{{ url_for('maquinas.listar_maquinas') }}" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Listado de Máquinas</a>
+        <a href="{{ url_for('maquinas.mostrar_formulario_maquina') }}" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Cargar Máquinas</a>
+        <a href="/" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Volver al Inicio</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pb-12">
+    <!-- Header -->
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-900">Editar Máquina</h1>
+        <div class="flex space-x-2">
+          <a href="{{ url_for('maquinas.ver_maquina', id_maquina=maquina.id) }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-malta hover:bg-cebada">
+            <i class="fas fa-eye mr-2"></i> Ver Detalles
+          </a>
+          <a href="{{ url_for('maquinas.listar_maquinas') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-malta hover:bg-cebada">
+            <i class="fas fa-arrow-left mr-2"></i> Volver al Listado
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <!-- Mensajes flash para notificaciones -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="p-4 mb-4 {% if category == 'success' %}bg-green-100 border-l-4 border-green-500 text-green-700{% else %}bg-red-100 border-l-4 border-red-500 text-red-700{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-6">
+          <h2 class="text-2xl font-bold mb-6 text-cebada">Editar Máquina #{{ maquina.id }}</h2>
+          
+          <form id="formMaquina" method="POST" action="{{ url_for('maquinas.editar_maquina', id_maquina=maquina.id) }}">
+            <div class="space-y-6">
+              <div>
+                <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre de la Máquina</label>
+                <input type="text" name="nombre" id="nombre" value="{{ maquina.nombre }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 py-2 px-3 border">
+                <p class="mt-1 text-sm text-red-600 hidden" id="error-nombre">Por favor ingrese un nombre para la máquina.</p>
+              </div>
+              
+              <div>
+                <label for="tipo_maquina" class="block text-sm font-medium text-gray-700">Tipo de Máquina</label>
+                <select name="tipo_maquina" id="tipo_maquina" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 py-2 px-3 border">
+                  <option value="">Seleccione un tipo</option>
+                  <option value="Envasadora" {% if maquina.tipo_maquina == 'Envasadora' %}selected{% endif %}>Envasadora</option>
+                  <option value="Etiquetadora" {% if maquina.tipo_maquina == 'Etiquetadora' %}selected{% endif %}>Etiquetadora</option>
+                  <option value="Pasteurizadora" {% if maquina.tipo_maquina == 'Pasteurizadora' %}selected{% endif %}>Pasteurizadora</option>
+                  <option value="Embotelladora" {% if maquina.tipo_maquina == 'Embotelladora' %}selected{% endif %}>Embotelladora</option>
+                  <option value="Fermentador" {% if maquina.tipo_maquina == 'Fermentador' %}selected{% endif %}>Fermentador</option>
+                  <option value="Otro" {% if maquina.tipo_maquina == 'Otro' %}selected{% endif %}>Otro</option>
+                </select>
+                <p class="mt-1 text-sm text-red-600 hidden" id="error-tipo">Por favor seleccione un tipo de máquina.</p>
+              </div>
+
+              <div>
+                <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
+                <textarea name="descripcion" id="descripcion" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 py-2 px-3 border">{{ maquina.descripcion }}</textarea>
+              </div>
+
+              <div>
+                <label for="frec_manteni" class="block text-sm font-medium text-gray-700">Frecuencia de Mantenimiento</label>
+                <select name="frec_manteni" id="frec_manteni" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 py-2 px-3 border">
+                  <option value="">Seleccione frecuencia</option>
+                  <option value="Diaria" {% if maquina.frec_manteni == 'Diaria' %}selected{% endif %}>Diaria</option>
+                  <option value="Semanal" {% if maquina.frec_manteni == 'Semanal' %}selected{% endif %}>Semanal</option>
+                  <option value="Quincenal" {% if maquina.frec_manteni == 'Quincenal' %}selected{% endif %}>Quincenal</option>
+                  <option value="Mensual" {% if maquina.frec_manteni == 'Mensual' %}selected{% endif %}>Mensual</option>
+                  <option value="Bimestral" {% if maquina.frec_manteni == 'Bimestral' %}selected{% endif %}>Bimestral</option>
+                  <option value="Trimestral" {% if maquina.frec_manteni == 'Trimestral' %}selected{% endif %}>Trimestral</option>
+                  <option value="Semestral" {% if maquina.frec_manteni == 'Semestral' %}selected{% endif %}>Semestral</option>
+                  <option value="Anual" {% if maquina.frec_manteni == 'Anual' %}selected{% endif %}>Anual</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+                <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cerveza hover:bg-cebada focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cerveza">
+                  <i class="fas fa-save mr-2"></i>Guardar Cambios
+                </button>
+                <a href="{{ url_for('maquinas.ver_maquina', id_maquina=maquina.id) }}" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cerveza">
+                  <i class="fas fa-times mr-2"></i>Cancelar
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // JavaScript for hamburger menu
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      hamburger.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+      
+      // Validación del formulario
+      const formMaquina = document.getElementById('formMaquina');
+      formMaquina.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Validar nombre
+        const nombre = document.getElementById('nombre');
+        if (!nombre.value.trim()) {
+          document.getElementById('error-nombre').classList.remove('hidden');
+          isValid = false;
+        } else {
+          document.getElementById('error-nombre').classList.add('hidden');
+        }
+        
+        // Validar tipo_maquina
+        const tipoMaquina = document.getElementById('tipo_maquina');
+        if (!tipoMaquina.value) {
+          document.getElementById('error-tipo').classList.remove('hidden');
+          isValid = false;
+        } else {
+          document.getElementById('error-tipo').classList.add('hidden');
+        }
+        
+        if (!isValid) {
+          event.preventDefault();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -35,15 +35,20 @@
           <!-- Logo -->
           <div class="flex-shrink-0 flex items-center">
             <img class="h-10 w-auto" src="/static/images/logo.png" alt="CBN Logo">
-          </div>
-          <!-- Desktop Navigation -->
-          <div class="hidden md:ml-6 md:flex md:space-x-8">
-            <a href="#inicio" class="border-b-2 border-cerveza px-3 py-2 text-sm font-medium">Inicio</a>
-            <a href="#cadenas-markov" class="border-b-2 border-transparent hover:border-cerveza px-3 py-2 text-sm font-medium">Cadenas de Markov</a>
-            <a href="#ia-sistema" class="border-b-2 border-transparent hover:border-cerveza px-3 py-2 text-sm font-medium">Sistema IA</a>
-            <a href="#monitoreo" class="border-b-2 border-transparent hover:border-cerveza px-3 py-2 text-sm font-medium">Monitoreo</a>
+            <span class="ml-2 text-xl font-bold">CBN Sistema</span>
           </div>
         </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex md:items-center md:space-x-4">
+          <a href="/" class="px-3 py-2 text-sm font-medium hover:bg-cerveza text-white rounded-md transition duration-150">Inicio</a>
+          <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-markov">Cadenas de Markov</a>
+          <a href="{{ url_for('markov.listar_ejercicios') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-ejercicios">Ejercicios</a>
+          <a href="{{ url_for('maquinas.listar_maquinas') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-maquinas">Máquinas</a>
+          <a href="/monitoreo" class="px-3 py-2 text-sm font-medium nav-item" id="nav-monitoreo">Monitoreo</a>
+          <a href="/seguimiento" class="px-3 py-2 text-sm font-medium nav-item" id="nav-seguimiento">Seguimiento</a>
+        </div>
+
         <!-- Mobile menu button -->
         <div class="flex items-center md:hidden">
           <button id="hamburger" type="button" class="text-white focus:outline-none">
@@ -58,709 +63,557 @@
     <!-- Mobile menu -->
     <div id="mobile-menu" class="hidden md:hidden">
       <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <a href="#inicio" class="bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
-        <a href="#cadenas-markov" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Cadenas de Markov</a>
-        <a href="#ia-sistema" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Sistema IA</a>
-        <a href="#monitoreo" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Monitoreo</a>
+        <a href="/" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
+        <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-markov">Cadenas de Markov</a>
+        <a href="{{ url_for('markov.listar_ejercicios') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-ejercicios">Ejercicios</a>
+        <a href="{{ url_for('maquinas.listar_maquinas') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-maquinas">Máquinas</a>
+        <a href="/monitoreo" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-monitoreo">Monitoreo</a>
+        <a href="/seguimiento" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-seguimiento">Seguimiento</a>
       </div>
     </div>
   </nav>
 
   <main class="pb-12">
-    <!-- Inicio Section -->
-    <section id="inicio" class="pt-16">
-      <!-- Header -->
-      <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 class="text-3xl font-bold text-gray-900">Sistema de Monitoreo CBN</h1>
-        </div>
-      </header>
-
-      <!-- Welcome Message -->
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div class="bg-white shadow rounded-lg p-6 mb-8">
-          <h2 class="text-2xl font-bold mb-4 text-cebada">Bienvenido al Sistema de Cadenas de Markov</h2>
-          <p class="text-xl mb-4">Este sistema permite monitorear y predecir el estado de las máquinas en el proceso de fabricación de cerveza utilizando algoritmos de cadenas de Markov e inteligencia artificial.</p>
-          <p class="text-xl">Utilice la barra de navegación para acceder a las diferentes funcionalidades del sistema.</p>
-          
-          {% if guardados %}
-          <div class="mt-4 p-4 bg-green-100 rounded-lg">
-            <p class="text-green-800 font-medium">¡Datos guardados correctamente! Total de equipos: {{ guardados }}</p>
-          </div>
-          {% endif %}
-          
-          {% if mensaje %}
-          <div class="mt-4 p-4 bg-yellow-100 rounded-lg">
-            <p class="text-yellow-800 font-medium">{{ mensaje }}</p>
-          </div>
-          {% endif %}
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-900">Cadenas de Markov</h1>
+        <div class="flex space-x-2">
+          <a href="{{ url_for('markov.listar_ejercicios') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-cebada hover:bg-malta transition duration-150">
+            <i class="fas fa-list mr-2"></i> Ver Ejercicios
+          </a>
         </div>
       </div>
-    </section>
+    </header>
 
-    <!-- Cadenas de Markov Section -->
-    <section id="cadenas-markov" class="pt-16">
-      <!-- Header -->
-      <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 class="text-3xl font-bold text-gray-900">Cadenas de Markov - Carga de Datos</h1>
-        </div>
-      </header>
-
-      <!-- Global Machinery State -->
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div class="bg-white shadow rounded-lg p-6 mb-8">
-          <h2 class="text-2xl font-bold mb-6 text-cebada">Estado Maquinaria Global:</h2>
-          <div class="flex items-center mb-4">
-            <input id="globalMachineState" type="checkbox" class="h-6 w-6 rounded border-gray-300 text-cerveza focus:ring-cerveza mr-3">
-            <label for="globalMachineState" class="text-xl font-medium">Activar estado global</label>
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <!-- Introducción -->
+      <div class="bg-white shadow rounded-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-4 text-cebada">Modelado de Estados de Máquinas con Cadenas de Markov</h2>
+        <p class="text-gray-700 mb-4">
+          Las cadenas de Markov son modelos matemáticos que describen una secuencia de posibles eventos donde la probabilidad de cada evento depende únicamente del estado del evento anterior.
+        </p>
+        <p class="text-gray-700 mb-4">
+          En este sistema, modelamos el comportamiento de las máquinas con matrices de transición 4x4, representando 4 posibles estados de funcionamiento:
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div class="bg-espuma p-3 rounded-lg border border-cebada">
+            <h3 class="text-cebada font-bold">Óptimo</h3>
+            <p class="text-gray-600 text-sm">Funcionamiento perfecto</p>
           </div>
-          <div class="mb-4">
-            <select id="globalState" class="mt-1 block w-full py-3 px-4 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-cerveza focus:border-cerveza">
-              <option selected disabled>Selecciona una opción</option>
-              <option value="muy_bueno">Muy bueno</option>
-              <option value="bueno">Bueno</option>
-              <option value="malo">Malo</option>
-            </select>
+          <div class="bg-espuma p-3 rounded-lg border border-cebada">
+            <h3 class="text-cebada font-bold">Normal</h3>
+            <p class="text-gray-600 text-sm">Funcionamiento estándar</p>
+          </div>
+          <div class="bg-espuma p-3 rounded-lg border border-cebada">
+            <h3 class="text-cebada font-bold">Degradado</h3>
+            <p class="text-gray-600 text-sm">Necesita mantenimiento</p>
+          </div>
+          <div class="bg-espuma p-3 rounded-lg border border-cebada">
+            <h3 class="text-cebada font-bold">Crítico</h3>
+            <p class="text-gray-600 text-sm">Requiere intervención</p>
           </div>
         </div>
       </div>
 
-      <!-- Machine Input Form -->
-      <form action="/cadena-markov" method="POST" id="maquinariaForm">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <div class="bg-white shadow rounded-lg p-6 mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-cebada">Datos de Maquinaria</h2>
+      <!-- Formulario de Cadena de Markov - Mejorado con secciones más claras -->
+      <div class="bg-white shadow rounded-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 text-cebada">Resolver Cadena de Markov para Estados de Máquina</h2>
+        
+        <form id="markovForm" class="space-y-8">
+          <!-- Sección 1: Información Básica -->
+          <div class="bg-espuma p-5 rounded-lg border border-cebada">
+            <h3 class="text-xl font-bold mb-4 text-cebada">1. Información Básica</h3>
             
-            <!-- Table Headers -->
-            <div class="grid grid-cols-5 gap-4 mb-4 font-bold text-lg border-b border-gray-200 pb-2">
-              <div>NOMBRE MAQUINARIA</div>
-              <div>QUE HACE LA MAQUINARIA</div>
-              <div>TIEMPOS DE USO (coma-sep.)</div>
-              <div>FECHA</div>
-              <div>ESTADO</div>
-            </div>
-
-            <!-- Machine 1 -->
-            <div class="grid grid-cols-5 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <input type="text" name="nombre_equipo" placeholder="Nombre #1" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="text" name="funcion_maquina" placeholder="Función" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="text" name="tiempos_uso" placeholder="0.2,0.5,0.3" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="date" name="fecha" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <select name="estado_equipo" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-                  <option value="muy_bueno">Muy bueno</option>
-                  <option value="bueno">Bueno</option>
-                  <option value="malo">Malo</option>
+                <label for="id_maquina" class="block text-sm font-medium text-gray-700 mb-1">
+                  <i class="fas fa-cog mr-1"></i> Máquina a Analizar <span class="text-red-500">*</span>
+                </label>
+                <!-- Reemplazar el selector de máquinas con esta versión -->
+                <select id="id_maquina" name="id_maquina" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 bg-white">
+                  <option value="">Seleccione una máquina</option>
+                  {% for maquina in maquinas %}
+                    <option value="{{ maquina.id }}" {% if id_maquina_seleccionada and id_maquina_seleccionada|string == maquina.id|string %}selected{% endif %}>
+                      {{ maquina.nombre }} ({{ maquina.tipo_maquina }})
+                    </option>
+                  {% endfor %}
                 </select>
+                <p class="mt-1 text-sm text-red-600 hidden" id="error-maquina">Debe seleccionar una máquina para realizar el análisis.</p>
+              </div>
+
+              <div>
+                <label for="num_pasos" class="block text-sm font-medium text-gray-700 mb-1">
+                  <i class="fas fa-step-forward mr-1"></i> Número de Pasos a Predecir
+                </label>
+                <input type="number" id="num_pasos" name="num_pasos" min="1" max="100" value="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 bg-white">
+                <p class="text-gray-500 text-xs mt-1">Número de transiciones a considerar en la predicción de estado futuro.</p>
               </div>
             </div>
 
-            <!-- Machine 2 -->
-            <div class="grid grid-cols-5 gap-4 mb-6">
-              <div>
-                <input type="text" name="nombre_equipo" placeholder="Nombre #2" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="text" name="funcion_maquina" placeholder="Función" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="text" name="tiempos_uso" placeholder="0.2,0.5,0.3" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="date" name="fecha" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <select name="estado_equipo" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-                  <option value="muy_bueno">Muy bueno</option>
-                  <option value="bueno">Bueno</option>
-                  <option value="malo">Malo</option>
-                </select>
-              </div>
-            </div>
-            
-            <!-- Machine 3 -->
-            <div class="grid grid-cols-5 gap-4 mb-6">
-              <div>
-                <input type="text" name="nombre_equipo" placeholder="Nombre #3" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="text" name="funcion_maquina" placeholder="Función" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="text" name="tiempos_uso" placeholder="0.2,0.5,0.3" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="date" name="fecha" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <select name="estado_equipo" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-                  <option value="muy_bueno">Muy bueno</option>
-                  <option value="bueno">Bueno</option>
-                  <option value="malo">Malo</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Machine 4 -->
-            <div class="grid grid-cols-5 gap-4 mb-6">
-              <div>
-                <input type="text" name="nombre_equipo" placeholder="Nombre #4" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="text" name="funcion_maquina" placeholder="Función" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="text" name="tiempos_uso" placeholder="0.2,0.5,0.3" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <input type="date" name="fecha" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              </div>
-              <div>
-                <select name="estado_equipo" class="mt-1 block w-full py-2 px-3 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-                  <option value="muy_bueno">Muy bueno</option>
-                  <option value="bueno">Bueno</option>
-                  <option value="malo">Malo</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="mt-8">
-              <button type="submit" class="w-full py-4 bg-cerveza text-white text-xl font-bold rounded-md hover:bg-cebada focus:outline-none focus:ring-2 focus:ring-cerveza focus:ring-offset-2">
-                Subir Datos
-              </button>
-            </div>
-          </div>
-        </div>
-      </form>
-
-      <!-- Markov Chain Application Section -->
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 mb-12">
-        <div class="bg-white shadow rounded-lg p-6">
-          <h2 class="text-2xl font-bold mb-6 text-cebada">Aplicar Cadenas de Markov</h2>
-          <p class="text-xl mb-6">Seleccione una máquina para aplicar el algoritmo de cadenas de Markov y predecir su estado futuro:</p>
-          
-          <div class="mb-6">
-            <select id="machineSelect" class="mt-1 block w-full py-3 px-4 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-              <option selected disabled>Selecciona una máquina</option>
-              {% for equipo in equipos %}
-                <option value="{{ equipo.nombre_equipo }}">{{ equipo.nombre_equipo }}</option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- Matrix and Vector Input Section -->
-          <div class="border-t border-gray-200 pt-6 mb-6">
-            <h3 class="text-xl font-bold mb-4 text-gray-800">Matriz de Transición</h3>
-            <p class="mb-4 text-gray-600">Defina las probabilidades de transición entre estados (Bueno, Medio, Malo)</p>
-            
-            <div class="grid grid-cols-3 gap-2 mb-6">
-              <!-- Matrix headers -->
-              <div class="text-center font-bold">A Bueno</div>
-              <div class="text-center font-bold">A Medio</div>
-              <div class="text-center font-bold">A Malo</div>
-              
-              <!-- From Bueno row -->
-              <div class="col-span-3 text-left font-medium my-2">Desde Bueno:</div>
-              <div><input type="number" id="p_bb" min="0" max="1" step="0.1" value="0.7" class="w-full p-2 border border-gray-300 rounded"></div>
-              <div><input type="number" id="p_bm" min="0" max="1" step="0.1" value="0.2" class="w-full p-2 border border-gray-300 rounded"></div>
-              <div><input type="number" id="p_ba" min="0" max="1" step="0.1" value="0.1" class="w-full p-2 border border-gray-300 rounded"></div>
-              
-              <!-- From Medio row -->
-              <div class="col-span-3 text-left font-medium my-2">Desde Medio:</div>
-              <div><input type="number" id="p_mb" min="0" max="1" step="0.1" value="0.3" class="w-full p-2 border border-gray-300 rounded"></div>
-              <div><input type="number" id="p_mm" min="0" max="1" step="0.1" value="0.5" class="w-full p-2 border border-gray-300 rounded"></div>
-              <div><input type="number" id="p_ma" min="0" max="1" step="0.1" value="0.2" class="w-full p-2 border border-gray-300 rounded"></div>
-              
-              <!-- From Malo row -->
-              <div class="col-span-3 text-left font-medium my-2">Desde Malo:</div>
-              <div><input type="number" id="p_ab" min="0" max="1" step="0.1" value="0.1" class="w-full p-2 border border-gray-300 rounded"></div>
-              <div><input type="number" id="p_am" min="0" max="1" step="0.1" value="0.3" class="w-full p-2 border border-gray-300 rounded"></div>
-              <div><input type="number" id="p_aa" min="0" max="1" step="0.1" value="0.6" class="w-full p-2 border border-gray-300 rounded"></div>
-            </div>
-            
-            <div id="matrix-error" class="hidden text-red-600 mb-4"></div>
-            
-            <h3 class="text-xl font-bold mb-4 text-gray-800">Vector Inicial</h3>
-            <p class="mb-4 text-gray-600">Defina el estado inicial del sistema (suma debe ser 1)</p>
-            
-            <div class="grid grid-cols-3 gap-2 mb-6">
-              <div class="text-center font-bold">Bueno</div>
-              <div class="text-center font-bold">Medio</div>
-              <div class="text-center font-bold">Malo</div>
-              
-              <div><input type="number" id="v_bueno" min="0" max="1" step="0.1" value="1.0" class="w-full p-2 border border-gray-300 rounded"></div>
-              <div><input type="number" id="v_medio" min="0" max="1" step="0.1" value="0.0" class="w-full p-2 border border-gray-300 rounded"></div>
-              <div><input type="number" id="v_malo" min="0" max="1" step="0.1" value="0.0" class="w-full p-2 border border-gray-300 rounded"></div>
-            </div>
-            
-            <div id="vector-error" class="hidden text-red-600 mb-4"></div>
-            
-            <div class="flex justify-end">
-              <button id="validateMatrix" class="px-4 py-2 bg-cerveza text-white font-bold rounded hover:bg-cebada">
-                Validar Datos
-              </button>
+            <div class="mt-4">
+              <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-1">
+                <i class="fas fa-align-left mr-1"></i> Descripción del Ejercicio
+              </label>
+              <textarea id="descripcion" name="descripcion" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 bg-white" placeholder="Describa el propósito de este ejercicio de predicción..."></textarea>
             </div>
           </div>
 
-          <div class="mb-6">
-            <label for="predictionSteps" class="block text-lg font-medium text-gray-700 mb-2">Número de pasos para predicción:</label>
-            <input id="predictionSteps" type="number" min="1" max="100" value="5" class="mt-1 block w-full py-3 px-4 text-xl border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-          </div>
-
-          <button id="applyMarkov" class="w-full py-4 bg-cebada text-white text-xl font-bold rounded-md hover:bg-malta focus:outline-none focus:ring-2 focus:ring-cebada focus:ring-offset-2">
-            Aplicar Algoritmo
-          </button>
-
-          <div id="results" class="mt-8 hidden">
-            <h3 class="text-xl font-bold mb-4">Resultados de Predicción:</h3>
-            <div class="bg-espuma p-4 rounded-lg border border-cebada">
-              <p class="text-lg mb-2"><strong>Estado actual:</strong> <span id="currentState">Bueno</span></p>
-              <p class="text-lg mb-2"><strong>Probabilidad estado bueno:</strong> <span id="probGood">60%</span></p>
-              <p class="text-lg mb-2"><strong>Probabilidad estado medio:</strong> <span id="probMedium">30%</span></p>
-              <p class="text-lg mb-2"><strong>Probabilidad estado malo:</strong> <span id="probBad">10%</span></p>
-              <p class="text-lg mt-4"><strong>Recomendación:</strong> <span id="recommendation">La máquina mantiene buenas condiciones de operación.</span></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sistema IA Section -->
-    <section id="ia-sistema" class="pt-16">
-      <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 class="text-3xl font-bold text-gray-900">Sistema de Inteligencia Artificial</h1>
-        </div>
-      </header>
-      
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div class="bg-white shadow rounded-lg p-6 mb-8">
-          <h2 class="text-2xl font-bold mb-6 text-cebada">Monitoreo con IA</h2>
-          <p class="text-xl mb-6">El sistema de IA analiza constantemente los datos de las máquinas para detectar anomalías y prevenir fallos.</p>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div class="bg-espuma p-6 rounded-lg border border-cebada">
-              <h3 class="text-xl font-bold mb-4 text-malta">Estado de Detección</h3>
-              <p class="text-lg mb-4">El sistema de IA está actualmente monitoreando todas las máquinas registradas.</p>
-              <div class="flex items-center mb-2">
-                <div class="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
-                <span>Sistema operativo</span>
-              </div>
-              <div class="flex items-center mb-2">
-                <div class="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
-                <span>Conexión a sensores activa</span>
-              </div>
-              <div class="flex items-center">
-                <div class="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
-                <span>Modelo de IA cargado</span>
-              </div>
-            </div>
+          <!-- Sección 2: Nombres de los Estados -->
+          <div class="bg-espuma p-5 rounded-lg border border-cebada">
+            <h3 class="text-xl font-bold mb-4 text-cebada">2. Nombres de los Estados</h3>
+            <p class="text-gray-700 mb-4">Defina cómo quiere denominar a cada uno de los 4 posibles estados de la máquina:</p>
             
-            <div class="bg-espuma p-6 rounded-lg border border-cebada">
-              <h3 class="text-xl font-bold mb-4 text-malta">Últimas Alertas</h3>
-              <div class="space-y-4">
-                <div class="p-3 bg-yellow-100 border-l-4 border-yellow-500 rounded">
-                  <p class="font-bold">Alerta: Máquina 2</p>
-                  <p>Posible sobrecalentamiento detectado</p>
-                  <p class="text-sm text-gray-500">Hace 2 horas</p>
-                </div>
-                <div class="p-3 bg-green-100 border-l-4 border-green-500 rounded">
-                  <p class="font-bold">Resuelta: Máquina 3</p>
-                  <p>Patrón de vibración anormal corregido</p>
-                  <p class="text-sm text-gray-500">Hace 1 día</p>
-                </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label for="estado1" class="block text-sm font-medium text-gray-700 mb-1">Estado 1</label>
+                <input type="text" id="estado1" class="w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 bg-white" value="Óptimo">
+              </div>
+              <div>
+                <label for="estado2" class="block text-sm font-medium text-gray-700 mb-1">Estado 2</label>
+                <input type="text" id="estado2" class="w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 bg-white" value="Normal">
+              </div>
+              <div>
+                <label for="estado3" class="block text-sm font-medium text-gray-700 mb-1">Estado 3</label>
+                <input type="text" id="estado3" class="w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 bg-white" value="Degradado">
+              </div>
+              <div>
+                <label for="estado4" class="block text-sm font-medium text-gray-700 mb-1">Estado 4</label>
+                <input type="text" id="estado4" class="w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 bg-white" value="Crítico">
               </div>
             </div>
           </div>
-          
-          <button class="w-full py-4 bg-cerveza text-white text-xl font-bold rounded-md hover:bg-cebada focus:outline-none focus:ring-2 focus:ring-cerveza focus:ring-offset-2">
-            Ver Panel Completo de IA
-          </button>
-        </div>
-      </div>
-    </section>
 
-    <!-- Monitoreo Section -->
-    <section id="monitoreo" class="pt-16">
-      <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 class="text-3xl font-bold text-gray-900">Monitoreo en Tiempo Real</h1>
-        </div>
-      </header>
-      
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div class="bg-white shadow rounded-lg p-6 mb-8">
-          <h2 class="text-2xl font-bold mb-6 text-cebada">Panel de Control</h2>
-          
-          <!-- Display for calculation results if available -->
-          {% if resultados %}
-          <div class="mb-6 bg-espuma p-4 rounded-lg border border-cebada">
-            <h3 class="text-xl font-bold mb-4">Resultados de Cálculo para {{ sel }}</h3>
-            <div class="grid grid-cols-3 gap-4 mb-4">
-              <div class="text-center font-bold">Estado Bueno</div>
-              <div class="text-center font-bold">Estado Medio</div>
-              <div class="text-center font-bold">Estado Malo</div>
+          <!-- Sección 3: Vector Inicial -->
+          <div class="bg-espuma p-5 rounded-lg border border-cebada">
+            <h3 class="text-xl font-bold mb-2 text-cebada">3. Vector de Estado Inicial</h3>
+            <div class="flex items-center mb-4">
+              <div class="w-4 h-4 bg-cerveza rounded-full mr-2"></div>
+              <p class="text-gray-700">Representa la distribución de probabilidad inicial entre los estados.</p>
             </div>
-            <div class="grid grid-cols-3 gap-4">
-              <div class="text-center">{{ resultados[9]|round(2) }}</div>
-              <div class="text-center">{{ resultados[10]|round(2) }}</div>
-              <div class="text-center">{{ resultados[11]|round(2) }}</div>
-            </div>
-          </div>
-          {% endif %}
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-espuma p-6 rounded-lg border border-cebada">
-              <h3 class="text-xl font-bold mb-4 text-malta">Resumen de Estados</h3>
-              <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                  <span>Máquinas operativas:</span>
-                  <span class="font-bold">{{ equipos|length }}/{{ equipos|length }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span>En mantenimiento:</span>
-                  <span class="font-bold">0</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span>Alertas activas:</span>
-                  <span class="font-bold text-yellow-600">3</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span>Eficiencia general:</span>
-                  <span class="font-bold text-green-600">92%</span>
-                </div>
-              </div>
-            </div>
+            <p class="text-sm text-gray-600 mb-4 pl-6">Ingrese la probabilidad inicial para cada estado. La suma debe ser igual a 1.</p>
             
-            <div class="bg-espuma p-6 rounded-lg border border-cebada">
-              <h3 class="text-xl font-bold mb-4 text-malta">Acciones Rápidas</h3>
-              <div class="space-y-3">
-                <button class="w-full py-2 bg-cebada text-white font-bold rounded-md hover:bg-malta">
-                  Detener Todas las Máquinas
-                </button>
-                <button class="w-full py-2 bg-cerveza text-white font-bold rounded-md hover:bg-cebada">
-                  Iniciar Mantenimiento Preventivo
-                </button>
-                <form action="/probabilidades" method="POST">
-                  <select name="maquinaria" class="mt-1 mb-2 block w-full py-2 px-3 text-base border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:border-cerveza">
-                    <option selected disabled>Seleccione máquina para calcular</option>
-                    {% for equipo in equipos %}
-                      <option value="{{ equipo.nombre_equipo }}">{{ equipo.nombre_equipo }}</option>
-                    {% endfor %}
-                  </select>
-                  <button type="submit" name="calcular_futuro" class="w-full py-2 bg-gray-600 text-white font-bold rounded-md hover:bg-gray-700">
-                    Calcular Estado Futuro
-                  </button>
-                </form>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-2">
+              <div class="border border-cebada rounded-md p-2 bg-white">
+                <label class="block text-gray-700 text-sm font-bold mb-1" id="vlabel1">Óptimo</label>
+                <input type="number" class="vector-input w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="1.0">
+              </div>
+              <div class="border border-cebada rounded-md p-2 bg-white">
+                <label class="block text-gray-700 text-sm font-bold mb-1" id="vlabel2">Normal</label>
+                <input type="number" class="vector-input w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.0">
+              </div>
+              <div class="border border-cebada rounded-md p-2 bg-white">
+                <label class="block text-gray-700 text-sm font-bold mb-1" id="vlabel3">Degradado</label>
+                <input type="number" class="vector-input w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.0">
+              </div>
+              <div class="border border-cebada rounded-md p-2 bg-white">
+                <label class="block text-gray-700 text-sm font-bold mb-1" id="vlabel4">Crítico</label>
+                <input type="number" class="vector-input w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.0">
               </div>
             </div>
+            <div class="text-right">
+              <span class="text-sm text-gray-700">Suma total: <span id="vector-sum" class="text-cerveza font-bold">1.0</span></span>
+            </div>
           </div>
-          
-          <div class="text-center">
-            <button class="inline-block px-8 py-4 bg-cerveza text-white text-xl font-bold rounded-md hover:bg-cebada focus:outline-none focus:ring-2 focus:ring-cerveza focus:ring-offset-2">
-              Ver Panel Completo de Monitoreo
+
+          <!-- Sección 4: Matriz de Transición -->
+          <div class="bg-espuma p-5 rounded-lg border border-cebada">
+            <h3 class="text-xl font-bold mb-2 text-cebada">4. Matriz de Transición (4x4)</h3>
+            <div class="flex items-center mb-4">
+              <div class="w-4 h-4 bg-cerveza rounded-full mr-2"></div>
+              <p class="text-gray-700">Define las probabilidades de transición entre cada par de estados.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-4 pl-6">Cada fila debe sumar 1, representando la distribución de probabilidades desde un estado hacia los demás.</p>
+            
+            <div class="overflow-x-auto">
+              <table class="min-w-full border border-gray-300 rounded-md">
+                <thead class="bg-cebada text-white">
+                  <tr>
+                    <th class="w-32 p-3 text-left">De / Hacia →</th>
+                    <th class="w-32 p-3 text-center" id="header1">Óptimo</th>
+                    <th class="w-32 p-3 text-center" id="header2">Normal</th>
+                    <th class="w-32 p-3 text-center" id="header3">Degradado</th>
+                    <th class="w-32 p-3 text-center" id="header4">Crítico</th>
+                    <th class="w-20 p-3 text-center">Suma</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-t border-gray-300 bg-white">
+                    <td class="p-3 text-gray-800 font-medium bg-cebada/20" id="row1">Óptimo</td>
+                    <td class="p-3"><input type="number" class="matrix-input row-1 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.7"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-1 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.2"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-1 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.1"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-1 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.0"></td>
+                    <td class="p-3 text-center"><span class="row-sum text-cerveza font-bold">1.0</span></td>
+                  </tr>
+                  <tr class="border-t border-gray-300 bg-white">
+                    <td class="p-3 text-gray-800 font-medium bg-cebada/20" id="row2">Normal</td>
+                    <td class="p-3"><input type="number" class="matrix-input row-2 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.1"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-2 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.6"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-2 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.2"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-2 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.1"></td>
+                    <td class="p-3 text-center"><span class="row-sum text-cerveza font-bold">1.0</span></td>
+                  </tr>
+                  <tr class="border-t border-gray-300 bg-white">
+                    <td class="p-3 text-gray-800 font-medium bg-cebada/20" id="row3">Degradado</td>
+                    <td class="p-3"><input type="number" class="matrix-input row-3 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.0"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-3 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.2"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-3 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.6"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-3 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.2"></td>
+                    <td class="p-3 text-center"><span class="row-sum text-cerveza font-bold">1.0</span></td>
+                  </tr>
+                  <tr class="border-t border-gray-300 bg-white">
+                    <td class="p-3 text-gray-800 font-medium bg-cebada/20" id="row4">Crítico</td>
+                    <td class="p-3"><input type="number" class="matrix-input row-4 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.0"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-4 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.1"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-4 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.3"></td>
+                    <td class="p-3"><input type="number" class="matrix-input row-4 w-full text-center rounded-md border-gray-300 focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50" min="0" max="1" step="0.01" value="0.6"></td>
+                    <td class="p-3 text-center"><span class="row-sum text-cerveza font-bold">1.0</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-4 p-2 bg-cebada/10 rounded border border-cebada/30">
+              <p class="text-sm text-gray-700">
+                <i class="fas fa-info-circle text-cebada mr-2"></i>
+                <strong>Guía de interpretación:</strong> Cada fila representa "desde qué estado" y cada columna "hacia qué estado". 
+                Por ejemplo, el valor en la fila 1, columna 2 representa la probabilidad de pasar del estado "Óptimo" al estado "Normal".
+              </p>
+            </div>
+          </div>
+
+          <!-- Mensajes de error y botones de acción -->
+          <div id="validation-errors" class="hidden p-4 mb-4 bg-red-100 border-l-4 border-red-500 text-red-700"></div>
+
+          <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+            <button type="button" id="resolverBtn" class="flex-1 py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cerveza hover:bg-cebada focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cerveza">
+              <i class="fas fa-calculator mr-2"></i>Calcular Predicción con Markov
+            </button>
+            <button type="button" id="limpiarBtn" class="flex-1 py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cerveza">
+              <i class="fas fa-sync-alt mr-2"></i>Limpiar Formulario
             </button>
           </div>
-        </div>
+        </form>
       </div>
-    </section>
-  </main>
 
-  <!-- Footer -->
-  <footer class="bg-malta text-white py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center">
-        <img class="h-10 w-auto mx-auto mb-4" src="/static/images/logo.png" alt="CBN Logo">
-        <p class="text-sm text-gray-300">
-          &copy; 2023 Cervecería Boliviana Nacional. Todos los derechos reservados.
-        </p>
-        <div class="mt-4 flex justify-center space-x-6">
-          <a href="#" class="text-gray-300 hover:text-white">
-            <i class="fab fa-facebook-f"></i>
-          </a>
-          <a href="#" class="text-gray-300 hover:text-white">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="text-gray-300 hover:text-white">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="#" class="text-gray-300 hover:text-white">
-            <i class="fab fa-linkedin-in"></i>
-          </a>
+      <!-- Resultados -->
+      <div id="resultados" class="hidden bg-white shadow rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-6 text-cebada">Resultados de la Cadena de Markov</h2>
+        
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-3 text-gray-800">Después de <span id="result-pasos">5</span> pasos:</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+              <h4 class="text-cebada font-bold mb-2" id="result-label1">Óptimo</h4>
+              <p class="text-3xl font-bold text-gray-800" id="result-value1">25%</p>
+            </div>
+            <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+              <h4 class="text-cebada font-bold mb-2" id="result-label2">Normal</h4>
+              <p class="text-3xl font-bold text-gray-800" id="result-value2">40%</p>
+            </div>
+            <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+              <h4 class="text-cebada font-bold mb-2" id="result-label3">Degradado</h4>
+              <p class="text-3xl font-bold text-gray-800" id="result-value3">25%</p>
+            </div>
+            <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+              <h4 class="text-cebada font-bold mb-2" id="result-label4">Crítico</h4>
+              <p class="text-3xl font-bold text-gray-800" id="result-value4">10%</p>
+            </div>
+          </div>
+          
+          <!-- Nueva sección: Recomendación para n días -->
+          <div id="recomendacion-corto-plazo" class="p-4 bg-cerveza/20 border-l-4 border-cerveza rounded-md mt-4">
+            <h3 class="text-lg font-bold mb-2 text-cebada">Recomendación a corto plazo (<span id="dias-recomendacion">5</span> días):</h3>
+            <p class="text-gray-800" id="recomendacion-texto-corto-plazo">
+              Analizando la situación...
+            </p>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold mb-3 text-gray-800">Estado estacionario (largo plazo):</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+              <h4 class="text-cebada font-bold mb-2" id="steady-label1">Óptimo</h4>
+              <p class="text-3xl font-bold text-gray-800" id="steady-value1">20%</p>
+            </div>
+            <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+              <h4 class="text-cebada font-bold mb-2" id="steady-label2">Normal</h4>
+              <p class="text-3xl font-bold text-gray-800" id="steady-value2">35%</p>
+            </div>
+            <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+              <h4 class="text-cebada font-bold mb-2" id="steady-label3">Degradado</h4>
+              <p class="text-3xl font-bold text-gray-800" id="steady-value3">30%</p>
+            </div>
+            <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+              <h4 class="text-cebada font-bold mb-2" id="steady-label4">Crítico</h4>
+              <p class="text-3xl font-bold text-gray-800" id="steady-value4">15%</p>
+            </div>
+          </div>
+          
+          <!-- Explicación del estado estacionario - Versión mejorada -->
+          <div class="bg-gray-100 p-4 rounded-lg text-gray-700 mb-4">
+            <div class="flex items-start">
+              <div class="text-blue-500 mr-3 mt-1">
+                <i class="fas fa-info-circle text-xl"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg mb-2">¿Qué significa el estado estacionario?</h4>
+                <p class="mb-2">
+                  El estado estacionario muestra la distribución de probabilidad a la que tiende el sistema <strong>independientemente de su estado inicial</strong>, después de un gran número de transiciones.
+                </p>
+                <p>
+                  Esta es la distribución de estados donde la máquina <strong>pasará la mayor parte de su tiempo a largo plazo</strong>, por lo que es clave para planificar el mantenimiento preventivo.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Explicación del estado estacionario -->
+          <div class="bg-gray-100 p-3 rounded-lg text-sm text-gray-700 mb-4">
+            <p><i class="fas fa-info-circle text-blue-500 mr-1"></i> <strong>Nota técnica:</strong> El estado estacionario se calcula utilizando el método de vectores propios de la matriz de transición. Representa la distribución de probabilidad límite cuando el número de pasos tiende a infinito, independientemente del estado inicial.</p>
+          </div>
+        </div>
+        
+        <div id="recomendacion" class="p-4 bg-cerveza/20 border-l-4 border-cerveza rounded-md">
+          <h3 class="text-lg font-bold mb-2 text-cebada">Recomendación a largo plazo:</h3>
+          <p class="text-gray-800" id="recomendacion-texto">
+            Según el análisis de Markov, esta máquina tiene una alta probabilidad de mantener un buen funcionamiento a corto plazo, pero a largo plazo se recomienda programar mantenimiento preventivo.
+          </p>
+        </div>
+        
+        <div class="mt-6 flex justify-end">
+          <button type="button" id="guardarBtn" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cerveza hover:bg-cebada focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cerveza">
+            <i class="fas fa-save mr-2"></i>Guardar Ejercicio
+          </button>
         </div>
       </div>
     </div>
-  </footer>
+  </main>
 
+  <!-- Al final del body, agregar el script para marcar ítems activos -->
   <script>
-    // JavaScript for hamburger menu
     document.addEventListener('DOMContentLoaded', function() {
-      const hamburger = document.getElementById('hamburger');
-      const mobileMenu = document.getElementById('mobile-menu');
+      // Activar ítem en el nav principal
+      document.getElementById('nav-markov').classList.add('bg-cerveza');
+      document.getElementById('mobile-nav-markov').classList.add('bg-cerveza');
       
-      hamburger.addEventListener('click', function() {
-        mobileMenu.classList.toggle('hidden');
-      });
-
-      // Script to handle global state checkbox
-      document.getElementById('globalMachineState').addEventListener('change', function() {
-        const globalState = document.getElementById('globalState');
-        globalState.disabled = !this.checked;
-        
-        if (this.checked) {
-          const stateSelects = document.querySelectorAll('select[name="estado_equipo"]');
-          const selectedState = globalState.value;
-          if (selectedState && selectedState !== 'Selecciona una opción') {
-            stateSelects.forEach(select => {
-              select.value = mapGlobalStateToMachineState(selectedState);
-            });
-          }
-        }
-      });
-
-      document.getElementById('globalState').addEventListener('change', function() {
-        if (document.getElementById('globalMachineState').checked) {
-          const stateSelects = document.querySelectorAll('select[name="estado_equipo"]');
-          const selectedState = this.value;
-          stateSelects.forEach(select => {
-            select.value = mapGlobalStateToMachineState(selectedState);
-          });
-        }
-      });
-
-      function mapGlobalStateToMachineState(globalState) {
-        switch(globalState) {
-          case 'muy_bueno':
-              return 'muy_bueno';
-          case 'bueno':
-            return 'bueno';
-          case 'malo':
-            return 'malo';
-          default:
-            return 'bueno';
-        }
-      }
-
-      // Validate matrix rows sum to 1
-      function validateMatrixRow(row) {
-        const sum = row.reduce((a, b) => a + b, 0);
-        return Math.abs(sum - 1.0) < 0.001; // Allow small floating point errors
-      }
-
-      // Validate vector sums to 1
-      function validateVector(vector) {
-        const sum = vector.reduce((a, b) => a + b, 0);
-        return Math.abs(sum - 1.0) < 0.001; // Allow small floating point errors
-      }
-
-      // Validate all inputs are between 0 and 1
-      function validateRange(values) {
-        return values.every(val => val >= 0 && val <= 1);
-      }
-
-      // Matrix validation button
-      document.getElementById('validateMatrix').addEventListener('click', function() {
-        const matrixErrorDiv = document.getElementById('matrix-error');
-        const vectorErrorDiv = document.getElementById('vector-error');
-        
-        // Get matrix values
-        const rowBueno = [
-          parseFloat(document.getElementById('p_bb').value),
-          parseFloat(document.getElementById('p_bm').value),
-          parseFloat(document.getElementById('p_ba').value)
-        ];
-        
-        const rowMedio = [
-          parseFloat(document.getElementById('p_mb').value),
-          parseFloat(document.getElementById('p_mm').value),
-          parseFloat(document.getElementById('p_ma').value)
-        ];
-        
-        const rowMalo = [
-          parseFloat(document.getElementById('p_ab').value),
-          parseFloat(document.getElementById('p_am').value),
-          parseFloat(document.getElementById('p_aa').value)
-        ];
-        
-        // Get vector values
-        const vector = [
-          parseFloat(document.getElementById('v_bueno').value),
-          parseFloat(document.getElementById('v_medio').value),
-          parseFloat(document.getElementById('v_malo').value)
-        ];
-        
-        // Validate matrix
-        let matrixValid = true;
-        let matrixMessage = "";
-        
-        if (!validateRange([...rowBueno, ...rowMedio, ...rowMalo])) {
-          matrixValid = false;
-          matrixMessage = "Error: Todos los valores deben estar entre 0 y 1";
-        } else {
-          if (!validateMatrixRow(rowBueno)) {
-            matrixValid = false;
-            matrixMessage = "Error: La fila 'Desde Bueno' debe sumar 1 (actual: " + rowBueno.reduce((a, b) => a + b, 0).toFixed(2) + ")";
-          } else if (!validateMatrixRow(rowMedio)) {
-            matrixValid = false;
-            matrixMessage = "Error: La fila 'Desde Medio' debe sumar 1 (actual: " + rowMedio.reduce((a, b) => a + b, 0).toFixed(2) + ")";
-          } else if (!validateMatrixRow(rowMalo)) {
-            matrixValid = false;
-            matrixMessage = "Error: La fila 'Desde Malo' debe sumar 1 (actual: " + rowMalo.reduce((a, b) => a + b, 0).toFixed(2) + ")";
-          }
-        }
-        
-        // Display matrix validation result
-        if (matrixValid) {
-          matrixErrorDiv.classList.add('hidden');
-        } else {
-          matrixErrorDiv.textContent = matrixMessage;
-          matrixErrorDiv.classList.remove('hidden');
-        }
-        
-        // Validate vector
-        let vectorValid = true;
-        let vectorMessage = "";
-        
-        if (!validateRange(vector)) {
-          vectorValid = false;
-          vectorMessage = "Error: Todos los valores deben estar entre 0 y 1";
-        } else if (!validateVector(vector)) {
-          vectorValid = false;
-          vectorMessage = "Error: El vector debe sumar 1 (actual: " + vector.reduce((a, b) => a + b, 0).toFixed(2) + ")";
-        }
-        
-        // Display vector validation result
-        if (vectorValid) {
-          vectorErrorDiv.classList.add('hidden');
-        } else {
-          vectorErrorDiv.textContent = vectorMessage;
-          vectorErrorDiv.classList.remove('hidden');
-        }
-        
-        // Show success message if both valid
-        if (matrixValid && vectorValid) {
-          alert("¡La matriz y el vector son válidos! Puede continuar con el cálculo.");
-        }
-      });
-
-      // Apply Markov button click handler with AJAX
-      document.getElementById('applyMarkov').addEventListener('click', function() {
-        const maquinaSeleccionada = document.getElementById('machineSelect').value;
-        const pasos = document.getElementById('predictionSteps').value;
-        
-        if (!maquinaSeleccionada || maquinaSeleccionada === 'Selecciona una máquina') {
-          alert('Por favor selecciona una máquina primero');
-          return;
-        }
-        
-        // Get matrix and vector values
-        const matriz_transicion = [
-          [
-            parseFloat(document.getElementById('p_bb').value),
-            parseFloat(document.getElementById('p_bm').value),
-            parseFloat(document.getElementById('p_ba').value)
-          ],
-          [
-            parseFloat(document.getElementById('p_mb').value),
-            parseFloat(document.getElementById('p_mm').value),
-            parseFloat(document.getElementById('p_ma').value)
-          ],
-          [
-            parseFloat(document.getElementById('p_ab').value),
-            parseFloat(document.getElementById('p_am').value),
-            parseFloat(document.getElementById('p_aa').value)
-          ]
-        ];
-        
-        const vector_inicial = [
-          parseFloat(document.getElementById('v_bueno').value),
-          parseFloat(document.getElementById('v_medio').value),
-          parseFloat(document.getElementById('v_malo').value)
-        ];
-        
-        // Mostrar indicador de carga
-        document.getElementById('applyMarkov').innerHTML = 'Calculando...';
-        document.getElementById('applyMarkov').disabled = true;
-        
-        // AJAX request to the Flask endpoint
-        $.ajax({
-          url: '/aplicar-markov',
-          method: 'POST',
-          data: {
-            machineSelect: maquinaSeleccionada,
-            predictionSteps: pasos,
-            matriz_transicion: JSON.stringify(matriz_transicion),
-            vector_inicial: JSON.stringify(vector_inicial)
-          },
-          success: function(response) {
-            // Restaurar botón
-            document.getElementById('applyMarkov').innerHTML = 'Aplicar Algoritmo';
-            document.getElementById('applyMarkov').disabled = false;
-            
-            if (response.error) {
-              alert(response.error);
-              return;
-            }
-            
-            // Update the results panel with the data from server
-            document.getElementById('currentState').textContent = response.currentState;
-            document.getElementById('probGood').textContent = response.probGood;
-            document.getElementById('probMedium').textContent = response.probMedium;
-            document.getElementById('probBad').textContent = response.probBad;
-            document.getElementById('recommendation').textContent = response.recommendation;
-            
-            // Show the results section
-            document.getElementById('results').classList.remove('hidden');
-            
-            // Añadir clase de estilo según la recomendación
-            const recommendation = document.getElementById('recommendation');
-            recommendation.className = ''; // Limpiar clases anteriores
-            
-            if (response.recommendation.includes('Alerta')) {
-              recommendation.classList.add('text-red-600', 'font-bold');
-            } else if (response.recommendation.includes('Precaución')) {
-              recommendation.classList.add('text-yellow-600', 'font-bold');
-            } else {
-              recommendation.classList.add('text-green-600');
-            }
-          },
-          error: function() {
-            // Restaurar botón
-            document.getElementById('applyMarkov').innerHTML = 'Aplicar Algoritmo';
-            document.getElementById('applyMarkov').disabled = false;
-            alert('Error al procesar la solicitud');
-          }
-        });
-      });
-
-      // Smooth scrolling for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
+      // Resto del código para formulario, etc.
+      $(document).ready(function() {
+        // Actualizar nombres en tablas cuando se modifican los campos de nombres de estados
+        $('#estado1, #estado2, #estado3, #estado4').on('input', function() {
+          const estado1 = $('#estado1').val() || 'Óptimo';
+          const estado2 = $('#estado2').val() || 'Normal';
+          const estado3 = $('#estado3').val() || 'Degradado';
+          const estado4 = $('#estado4').val() || 'Crítico';
           
-          document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
+          $('#header1, #vlabel1').text(estado1);
+          $('#header2, #vlabel2').text(estado2);
+          $('#header3, #vlabel3').text(estado3);
+          $('#header4, #vlabel4').text(estado4);
+          $('#row1').text(estado1);
+          $('#row2').text(estado2);
+          $('#row3').text(estado3);
+          $('#row4').text(estado4);
+        });
+        
+        // Calcular sumas de filas de la matriz
+        $('.matrix-input').on('input', function() {
+          const rowClass = $(this).attr('class').split(' ').find(cls => cls.startsWith('row-'));
+          const rowInputs = $(`.${rowClass}`);
+          
+          let sum = 0;
+          rowInputs.each(function() {
+            const val = parseFloat($(this).val()) || 0;
+            sum += val;
+          });
+          
+          const sumElement = $(this).closest('tr').find('.row-sum');
+          sumElement.text(sum.toFixed(2));
+          
+          if (Math.abs(sum - 1.0) > 0.01) {
+            sumElement.removeClass('text-cerveza').addClass('text-red-500');
+          } else {
+            sumElement.removeClass('text-red-500').addClass('text-cerveza');
+          }
+        });
+        
+        // Calcular suma del vector inicial
+        $('.vector-input').on('input', function() {
+          let sum = 0;
+          $('.vector-input').each(function() {
+            const val = parseFloat($(this).val()) || 0;
+            sum += val;
+          });
+          
+          $('#vector-sum').text(sum.toFixed(2));
+          
+          if (Math.abs(sum - 1.0) > 0.01) {
+            $('#vector-sum').removeClass('text-cerveza').addClass('text-red-500');
+          } else {
+            $('#vector-sum').removeClass('text-red-500').addClass('text-cerveza');
+          }
+        });
+        
+        // Limpiar formulario
+        $('#limpiarBtn').click(function() {
+          $('#markovForm')[0].reset();
+          $('.row-sum').text('1.0').removeClass('text-red-500').addClass('text-cerveza');
+          $('#vector-sum').text('1.0').removeClass('text-red-500').addClass('text-cerveza');
+          $('#validation-errors').addClass('hidden').html('');
+          $('#resultados').addClass('hidden');
+          $('#error-maquina').addClass('hidden');
+        });
+        
+        // Validar y resolver
+        $('#resolverBtn').click(function() {
+          // Validación básica
+          let isValid = true;
+          let errors = [];
+          
+          // Verificar que se seleccionó una máquina
+          if (!$('#id_maquina').val()) {
+            $('#error-maquina').removeClass('hidden');
+            isValid = false;
+            errors.push('Debe seleccionar una máquina');
+          } else {
+            $('#error-maquina').addClass('hidden');
+          }
+          
+          // Verificar sumas de filas
+          $('.row-sum').each(function(index) {
+            const sum = parseFloat($(this).text());
+            if (Math.abs(sum - 1.0) > 0.01) {
+              isValid = false;
+              errors.push(`La fila ${index + 1} no suma 1.0 (suma actual: ${sum.toFixed(2)})`);
+            }
+          });
+          
+          // Verificar suma del vector
+          const vectorSum = parseFloat($('#vector-sum').text());
+          if (Math.abs(vectorSum - 1.0) > 0.01) {
+            isValid = false;
+            errors.push(`El vector inicial no suma 1.0 (suma actual: ${vectorSum.toFixed(2)})`);
+          }
+          
+          // Mostrar errores si los hay
+          if (!isValid) {
+            $('#validation-errors').removeClass('hidden').html('<ul class="list-disc pl-5"><li>' + errors.join('</li><li>') + '</li></ul>');
+            return;
+          }
+          
+          // Ocultar errores si todo está bien
+          $('#validation-errors').addClass('hidden').html('');
+          
+          // Construir la matriz y el vector
+          let matriz = [];
+          for (let i = 1; i <= 4; i++) {
+            let fila = [];
+            $(`.row-${i}`).each(function() {
+              fila.push(parseFloat($(this).val()) || 0);
+            });
+            matriz.push(fila);
+          }
+          
+          let vector = [];
+          $('.vector-input').each(function() {
+            vector.push(parseFloat($(this).val()) || 0);
+          });
+          
+          // Obtener nombres de estados
+          const nombres = [
+            $('#estado1').val() || 'Óptimo',
+            $('#estado2').val() || 'Normal',
+            $('#estado3').val() || 'Degradado',
+            $('#estado4').val() || 'Crítico'
+          ];
+          
+          // Datos para enviar
+          const datos = {
+            matriz_transicion: JSON.stringify(matriz),
+            vector_inicial: JSON.stringify(vector),
+            nombres_estados: JSON.stringify(nombres),
+            id_maquina: $('#id_maquina').val(),
+            descripcion: $('#descripcion').val(),
+            num_pasos: $('#num_pasos').val()
+          };
+          
+          // Mostrar indicador de carga
+          $('#resolverBtn').html('<i class="fas fa-spinner fa-spin mr-2"></i>Calculando...').prop('disabled', true);
+          
+          // Enviar datos
+          $.ajax({
+            url: '{{ url_for("markov.aplicar_markov") }}',
+            type: 'POST',
+            data: datos,
+            success: function(response) {
+              // Restaurar botón
+              $('#resolverBtn').html('<i class="fas fa-calculator mr-2"></i>Resolver Cadena de Markov').prop('disabled', false);
+              
+              // Mostrar resultados
+              $('#resultados').removeClass('hidden');
+              $('#result-pasos').text($('#num_pasos').val());
+              $('#dias-recomendacion').text($('#num_pasos').val());
+              
+              // Actualizar etiquetas de estados
+              for (let i = 0; i < 4; i++) {
+                $(`#result-label${i+1}`).text(nombres[i]);
+                $(`#steady-label${i+1}`).text(nombres[i]);
+              }
+              
+              // Actualizar valores después de n pasos
+              const resultadoPasos = response.resultado_pasos;
+              for (let i = 0; i < 4; i++) {
+                const porcentaje = (resultadoPasos[i] * 100).toFixed(1);
+                $(`#result-value${i+1}`).text(`${porcentaje}%`);
+              }
+              
+              // Actualizar valores de estado estacionario
+              const estacionario = response.estado_estacionario;
+              for (let i = 0; i < 4; i++) {
+                const porcentaje = (estacionario[i] * 100).toFixed(1);
+                $(`#steady-value${i+1}`).text(`${porcentaje}%`);
+              }
+            },
+            error: function(xhr, status, error) {
+              // Restaurar botón
+              $('#resolverBtn').html('<i class="fas fa-calculator mr-2"></i>Resolver Cadena de Markov').prop('disabled', false);
+              
+              // Mostrar error
+              let errorMsg = xhr.responseJSON && xhr.responseJSON.error 
+                ? xhr.responseJSON.error 
+                : 'Error en el cálculo. Por favor revise los datos e intente nuevamente.';
+              
+              $('#validation-errors').removeClass('hidden').html(errorMsg);
+            }
           });
         });
+        
+        // Botón para hamburger menu en móviles
+        $('#hamburger').click(function() {
+          $('#mobile-menu').toggleClass('hidden');
+        });
+        
+        // Ver si hay máquinas en el selector
+        if ($('#id_maquina option').length <= 1) {
+          console.log("No hay máquinas disponibles. Asegúrese de que se hayan registrado máquinas.");
+          $('#validation-errors').removeClass('hidden').html('No hay máquinas disponibles en el sistema. Por favor registre al menos una máquina antes de continuar.');
+        }
       });
       
-      // If there's a section parameter in the URL, scroll to it
-      const urlParams = new URLSearchParams(window.location.search);
-      const section = urlParams.get('seccion');
-      if (section) {
-        const element = document.getElementById(section);
-        if (element) {
-          element.scrollIntoView({behavior: 'smooth'});
+      // Función para determinar frecuencia de mantenimiento basada en estados estacionarios
+      function determinarFrecuenciaMantenimiento(estacionario) {
+        // Índice de riesgo: ponderación de estados degradado y crítico
+        const indiceRiesgo = estacionario[2] * 0.5 + estacionario[3] * 1.0;
+        
+        if (indiceRiesgo > 0.4) {
+          return "7-14"; // Mantenimiento frecuente (semanal a bisemanal)
+        } else if (indiceRiesgo > 0.25) {
+          return "30"; // Mantenimiento mensual
+        } else if (indiceRiesgo > 0.15) {
+          return "60-90"; // Mantenimiento bimestral o trimestral
+        } else {
+          return "180"; // Mantenimiento semestral
         }
       }
     });

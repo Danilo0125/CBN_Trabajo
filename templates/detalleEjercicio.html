@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBN - Detalle de Ejercicio</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cerveza': '#FFCC33',
+            'cebada': '#C1994D',
+            'espuma': '#FFF3E0',
+            'malta': '#8B4513',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-espuma text-gray-900 font-sans">
+  <!-- Top Navigation -->
+  <nav class="bg-cebada text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <!-- Logo -->
+          <div class="flex-shrink-0 flex items-center">
+            <img class="h-10 w-auto" src="/static/images/logo.png" alt="CBN Logo">
+            <span class="ml-2 text-xl font-bold">CBN Sistema</span>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex md:items-center md:space-x-4">
+          <a href="/" class="px-3 py-2 text-sm font-medium hover:bg-cerveza text-white rounded-md transition duration-150">Inicio</a>
+          <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-markov">Cadenas de Markov</a>
+          <a href="{{ url_for('markov.listar_ejercicios') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-ejercicios">Ejercicios</a>
+          <a href="{{ url_for('maquinas.listar_maquinas') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-maquinas">Máquinas</a>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button id="hamburger" type="button" class="text-white focus:outline-none">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="/" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
+        <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-markov">Cadenas de Markov</a>
+        <a href="{{ url_for('markov.listar_ejercicios') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-ejercicios">Ejercicios</a>
+        <a href="{{ url_for('maquinas.listar_maquinas') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-maquinas">Máquinas</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pb-12">
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-900">Detalle del Ejercicio #{{ ejercicio.id }}</h1>
+        <div class="flex space-x-2">
+          <a href="{{ url_for('markov.listar_ejercicios') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-cebada hover:bg-malta transition duration-150">
+            <i class="fas fa-list mr-2"></i> Volver al Listado
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="p-4 mb-4 {% if category == 'success' %}bg-green-100 border-l-4 border-green-500 text-green-700{% else %}bg-red-100 border-l-4 border-red-500 text-red-700{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
+      <!-- Información Básica -->
+      <div class="bg-white shadow rounded-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 text-cebada">Información del Ejercicio</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+            <h3 class="text-lg font-semibold text-gray-800">Detalles Generales</h3>
+            <div class="p-4 bg-espuma rounded-lg">
+              <p class="text-sm text-gray-600">Fecha de creación:</p>
+              <p class="font-bold">{{ ejercicio.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</p>
+              
+              <p class="text-sm text-gray-600 mt-3">Número de pasos:</p>
+              <p class="font-bold">{{ ejercicio.num_pasos }}</p>
+              
+              <p class="text-sm text-gray-600 mt-3">Descripción:</p>
+              <p class="font-medium">{{ ejercicio.descripcion or "Sin descripción" }}</p>
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <h3 class="text-lg font-semibold text-gray-800">Máquina Asociada</h3>
+            <div class="p-4 bg-espuma rounded-lg">
+              {% if ejercicio.maquina %}
+                <p class="text-sm text-gray-600">Nombre:</p>
+                <p class="font-bold">{{ ejercicio.maquina.nombre }}</p>
+                
+                <p class="text-sm text-gray-600 mt-3">Tipo:</p>
+                <p class="font-bold">{{ ejercicio.maquina.tipo_maquina }}</p>
+                
+                <p class="text-sm text-gray-600 mt-3">Frecuencia de mantenimiento:</p>
+                <p class="font-medium">{{ ejercicio.maquina.frec_manteni or "No especificada" }}</p>
+              {% else %}
+                <p class="text-red-600">Máquina no encontrada o eliminada</p>
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <h3 class="text-lg font-semibold text-gray-800">Estados</h3>
+            <div class="p-4 bg-espuma rounded-lg">
+              {% set nombres_estados = ejercicio.get_nombres_estados() %}
+              {% if nombres_estados %}
+                <div class="grid grid-cols-2 gap-2">
+                  {% for i in range(4) %}
+                    <div class="p-2 bg-white rounded border border-cebada">
+                      <p class="font-bold text-cebada">Estado {{ i+1 }}</p>
+                      <p>{{ nombres_estados[i] }}</p>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <p class="text-red-600">Nombres de estados no disponibles</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Datos del Modelo -->
+      <div class="bg-white shadow rounded-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 text-cebada">Datos del Modelo de Markov</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Vector Inicial -->
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-gray-800">Vector de Estado Inicial</h3>
+            {% set vector_inicial = ejercicio.get_vector_inicial() %}
+            {% set nombres_estados = ejercicio.get_nombres_estados() %}
+            
+            {% if vector_inicial %}
+              <div class="overflow-x-auto">
+                <table class="min-w-full bg-white rounded-lg overflow-hidden border border-gray-300">
+                  <thead class="bg-cebada text-white">
+                    <tr>
+                      {% for estado in nombres_estados %}
+                        <th class="px-4 py-2 text-center">{{ estado }}</th>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      {% for valor in vector_inicial %}
+                        <td class="px-4 py-2 text-center font-medium border">{{ "%.2f"|format(valor) }}</td>
+                      {% endfor %}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="text-red-600">Vector inicial no disponible</p>
+            {% endif %}
+          </div>
+          
+          <!-- Matriz de Transición -->
+          <div>
+            <h3 class="text-lg font-semibold mb-3 text-gray-800">Matriz de Transición</h3>
+            {% set matriz = ejercicio.get_matriz_estados() %}
+            {% set nombres_estados = ejercicio.get_nombres_estados() %}
+            
+            {% if matriz and nombres_estados %}
+              <div class="overflow-x-auto">
+                <table class="min-w-full bg-white rounded-lg overflow-hidden border border-gray-300">
+                  <thead class="bg-cebada text-white">
+                    <tr>
+                      <th class="px-4 py-2">De \ Hacia</th>
+                      {% for estado in nombres_estados %}
+                        <th class="px-4 py-2 text-center">{{ estado }}</th>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for i in range(matriz|length) %}
+                      <tr class="{% if loop.index % 2 == 0 %}bg-gray-50{% endif %}">
+                        <td class="px-4 py-2 font-medium bg-cebada/20">{{ nombres_estados[i] }}</td>
+                        {% for valor in matriz[i] %}
+                          <td class="px-4 py-2 text-center border">{{ "%.2f"|format(valor) }}</td>
+                        {% endfor %}
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="text-red-600">Matriz de transición no disponible</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Resultados -->
+      <div class="bg-white shadow rounded-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-6 text-cebada">Resultados</h2>
+        
+        {% set resultado = ejercicio.get_resultado() %}
+        {% set nombres_estados = ejercicio.get_nombres_estados() %}
+        
+        {% if resultado %}
+          <div class="space-y-8">
+            <!-- Resultado después de n pasos -->
+            <div>
+              <h3 class="text-lg font-semibold mb-3 text-gray-800">Después de {{ ejercicio.num_pasos }} pasos:</h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                {% for i in range(4) %}
+                  <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+                    <h4 class="text-cebada font-bold mb-2">{{ nombres_estados[i] }}</h4>
+                    <p class="text-3xl font-bold text-gray-800">{{ "%.1f"|format(resultado['resultado_pasos'][i] * 100) }}%</p>
+                  </div>
+                {% endfor %}
+              </div>
+              
+              <!-- Recomendación corto plazo -->
+              <div class="p-4 bg-cerveza/20 border-l-4 border-cerveza rounded-md mt-4">
+                <h3 class="text-lg font-bold mb-2 text-cebada">Recomendación a corto plazo ({{ ejercicio.num_pasos }} días):</h3>
+                {% set resultado_pasos = resultado['resultado_pasos'] %}
+                {% if resultado_pasos[3] > 0.15 %}
+                  <p class="text-gray-800">En {{ ejercicio.num_pasos }} días, existe una probabilidad del {{ "%.1f"|format(resultado_pasos[3] * 100) }}% de que la máquina entre en estado crítico. Se recomienda programar una revisión preventiva dentro de los próximos {{ [1, (ejercicio.num_pasos/2)|int]|max }} días.</p>
+                {% elif resultado_pasos[2] > 0.25 %}
+                  <p class="text-gray-800">En {{ ejercicio.num_pasos }} días, hay una probabilidad del {{ "%.1f"|format(resultado_pasos[2] * 100) }}% de que la máquina entre en estado degradado. Se sugiere una inspección de rutina antes de {{ ejercicio.num_pasos }} días.</p>
+                {% elif (resultado_pasos[0] + resultado_pasos[1]) > 0.8 %}
+                  <p class="text-gray-800">En {{ ejercicio.num_pasos }} días, la máquina tiene un {{ "%.1f"|format((resultado_pasos[0] + resultado_pasos[1]) * 100) }}% de probabilidad de mantenerse en condiciones óptimas o normales. No se requieren acciones inmediatas.</p>
+                {% else %}
+                  <p class="text-gray-800">En {{ ejercicio.num_pasos }} días, la máquina presenta una distribución equilibrada entre estados. Se recomienda monitoreo regular sin acciones específicas por ahora.</p>
+                {% endif %}
+              </div>
+            </div>
+            
+            <!-- Estado estacionario -->
+            <div>
+              <h3 class="text-lg font-semibold mb-3 text-gray-800">Estado estacionario (largo plazo):</h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                {% for i in range(4) %}
+                  <div class="bg-espuma p-4 rounded-lg border border-cebada text-center">
+                    <h4 class="text-cebada font-bold mb-2">{{ nombres_estados[i] }}</h4>
+                    <p class="text-3xl font-bold text-gray-800">{{ "%.1f"|format(resultado['estado_estacionario'][i] * 100) }}%</p>
+                  </div>
+                {% endfor %}
+              </div>
+              
+              <!-- Explicación del estado estacionario -->
+              <div class="bg-gray-100 p-4 rounded-lg text-gray-700 mb-4">
+                <div class="flex items-start">
+                  <div class="text-blue-500 mr-3 mt-1">
+                    <i class="fas fa-info-circle text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-lg mb-2">¿Qué significa el estado estacionario?</h4>
+                    <p class="mb-2">
+                      El estado estacionario muestra la distribución de probabilidad a la que tiende el sistema <strong>independientemente de su estado inicial</strong>, después de un gran número de transiciones.
+                    </p>
+                    <p>
+                      Esta es la distribución de estados donde la máquina <strong>pasará la mayor parte de su tiempo a largo plazo</strong>, por lo que es clave para planificar el mantenimiento preventivo.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Recomendación largo plazo -->
+              <div class="p-4 bg-cerveza/20 border-l-4 border-cerveza rounded-md">
+                <h3 class="text-lg font-bold mb-2 text-cebada">Recomendación a largo plazo:</h3>
+                {% set estacionario = resultado['estado_estacionario'] %}
+                {% if estacionario[3] > 0.2 %}
+                  <p class="text-gray-800">A largo plazo, la máquina tiene una probabilidad significativa ({{ "%.1f"|format(estacionario[3] * 100) }}%) de entrar en estado crítico. Se recomienda programar mantenimiento preventivo inmediato y revisar la matriz de transición para identificar los factores que llevan a este estado.</p>
+                {% elif estacionario[2] > 0.3 %}
+                  <p class="text-gray-800">A largo plazo, la máquina muestra tendencia a degradarse ({{ "%.1f"|format(estacionario[2] * 100) }}% en estado degradado). Se recomienda implementar un programa de mantenimiento preventivo recurrente.</p>
+                {% elif (estacionario[0] + estacionario[1]) > 0.6 %}
+                  <p class="text-gray-800">A largo plazo, la máquina muestra un comportamiento estable con {{ "%.1f"|format((estacionario[0] + estacionario[1]) * 100) }}% de probabilidad de mantenerse en estados óptimo o normal. Se recomienda mantener el régimen actual de mantenimiento.</p>
+                {% else %}
+                  <p class="text-gray-800">A largo plazo, el análisis de Markov muestra una distribución equilibrada entre estados. Se recomienda un programa de mantenimiento moderado con énfasis en el monitoreo continuo de parámetros críticos.</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <p class="text-red-600">No hay resultados disponibles para este ejercicio</p>
+        {% endif %}
+      </div>
+      
+      <!-- Acciones -->
+      <div class="flex justify-between">
+        <a href="{{ url_for('markov.listar_ejercicios') }}" class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cerveza">
+          <i class="fas fa-arrow-left mr-2"></i>Volver al Listado
+        </a>
+        
+        <form action="{{ url_for('markov.eliminar_ejercicio', id_ejercicio=ejercicio.id) }}" method="POST" onsubmit="return confirm('¿Está seguro de que desea eliminar este ejercicio? Esta acción no se puede deshacer.');">
+          <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            <i class="fas fa-trash-alt mr-2"></i>Eliminar Ejercicio
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Al final del body, agregar el script para marcar ítems activos -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Activar ítem en el nav principal
+      document.getElementById('nav-ejercicios').classList.add('bg-cerveza');
+      document.getElementById('mobile-nav-ejercicios').classList.add('bg-cerveza');
+      
+      // JavaScript para hamburger menu
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      hamburger.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+    });
+  </script>
+</body>
+</html>

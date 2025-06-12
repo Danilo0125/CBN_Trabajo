@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBN - Seguimiento</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cerveza': '#FFCC33',
+            'cebada': '#C1994D',
+            'espuma': '#FFF3E0',
+            'malta': '#8B4513',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-espuma text-gray-900 font-sans">
+  <!-- Top Navigation -->
+  <nav class="bg-cebada text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <!-- Logo -->
+          <div class="flex-shrink-0 flex items-center">
+            <img class="h-10 w-auto" src="/static/images/logo.png" alt="CBN Logo">
+            <span class="ml-2 text-xl font-bold">CBN Sistema</span>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex md:items-center md:space-x-4">
+          <a href="/" class="px-3 py-2 text-sm font-medium hover:bg-cerveza text-white rounded-md transition duration-150">Inicio</a>
+          <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-markov">Cadenas de Markov</a>
+          <a href="{{ url_for('markov.listar_ejercicios') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-ejercicios">Ejercicios</a>
+          <a href="{{ url_for('maquinas.listar_maquinas') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-maquinas">Máquinas</a>
+          <a href="/monitoreo" class="px-3 py-2 text-sm font-medium nav-item" id="nav-monitoreo">Monitoreo</a>
+          <a href="/seguimiento" class="px-3 py-2 text-sm font-medium nav-item" id="nav-seguimiento">Seguimiento</a>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button id="hamburger" type="button" class="text-white focus:outline-none">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="/" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
+        <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-markov">Cadenas de Markov</a>
+        <a href="{{ url_for('markov.listar_ejercicios') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-ejercicios">Ejercicios</a>
+        <a href="{{ url_for('maquinas.listar_maquinas') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-maquinas">Máquinas</a>
+        <a href="/monitoreo" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-monitoreo">Monitoreo</a>
+        <a href="/seguimiento" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-seguimiento">Seguimiento</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pb-12">
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-gray-900">Seguimiento de Máquinas</h1>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-6 text-cebada">Historial y Seguimiento</h2>
+        
+        <p class="text-gray-700 mb-6">Esta página mostrará el historial y seguimiento de mantenimiento de las máquinas.</p>
+        
+        <!-- Tabla de seguimiento -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-cebada">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  Máquina
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  Último Mantenimiento
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  Próximo Mantenimiento
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  Estado Actual
+                </th>
+                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <!-- Datos de ejemplo -->
+              <tr class="hover:bg-espuma">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">Envasadora A1</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">10/05/2023</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">10/07/2023</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Óptimo
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  <a href="#" class="text-indigo-600 hover:text-indigo-900">Ver detalles</a>
+                </td>
+              </tr>
+              <tr class="hover:bg-espuma">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">Embotelladora B2</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">15/04/2023</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">15/06/2023</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                    Degradado
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  <a href="#" class="text-indigo-600 hover:text-indigo-900">Ver detalles</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Activar ítem en el nav principal
+      document.getElementById('nav-seguimiento').classList.add('bg-cerveza');
+      document.getElementById('mobile-nav-seguimiento').classList.add('bg-cerveza');
+      
+      // Hamburger menu toggle
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      hamburger.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+    });
+  </script>
+</body>
+</html>

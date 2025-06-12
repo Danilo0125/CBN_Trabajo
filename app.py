@@ -3,12 +3,14 @@ from flask_socketio import SocketIO
 import os
 import sys
 
-# Importar módulos refactorizados
 from config import Config
 from routes.sensores_routes import web_blueprint
 from routes.api_routes import api_blueprint
+from routes.maquina_routes import maquina_blueprint
 from routes.markov_routes import markov_blueprint
+from routes.monitoreo_routes import monitoreo_blueprint  # Nuevo import
 from socket_events import setup_socket_events
+from database.database import get_database_uri, ensure_database_exists
 
 # Load the predictive model
 from modelo_predictivo import modelo_prediccion
@@ -21,13 +23,25 @@ proximo_envio = 0
 ultimo_heartbeat = 0
 TIMEOUT_SENSOR = 5  # seconds before considering sensor disconnected
 
+# Asegurar que la base de datos existe
+ensure_database_exists()
+
 # Crear la aplicación Flask con la carpeta estática configurada
 app = Flask(__name__, static_url_path='/static')
 app.config['SECRET_KEY'] = 'secret_key_for_socketio'
+app.config['SQLALCHEMY_DATABASE_URI'] = get_database_uri()
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Registrar blueprints
+# Importar e inicializar la base de datos
+from database.Modelos import db
+db.init_app(app)
+
+# Registrar blueprints con nombres únicos para evitar conflictos
 app.register_blueprint(web_blueprint)
 app.register_blueprint(api_blueprint, url_prefix='/api')
+app.register_blueprint(maquina_blueprint, name='maquinas')
+app.register_blueprint(markov_blueprint, name='markov')
+app.register_blueprint(monitoreo_blueprint, name='monitoreo')  # Nuevo blueprint
 
 # Inicializar Socket.IO
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
@@ -43,6 +57,11 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('CadenaMarkov.html', mensaje="Error interno del servidor"), 500
+
+# Asegurar que las tablas existen
+with app.app_context():
+    db.create_all()
+    print("Tablas de base de datos verificadas/creadas")
 
 ### Iniciar el servidor Flask-SocketIO
 if __name__ == '__main__':

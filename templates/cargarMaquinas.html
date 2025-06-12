@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBN - Cargar Máquinas</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cerveza': '#FFCC33',
+            'cebada': '#C1994D',
+            'espuma': '#FFF3E0',
+            'malta': '#8B4513',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-espuma text-gray-900 font-sans">
+  <!-- Top Navigation -->
+  <nav class="bg-cebada text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <!-- Logo -->
+          <div class="flex-shrink-0 flex items-center">
+            <img class="h-10 w-auto" src="/static/images/logo.png" alt="CBN Logo">
+            <span class="ml-2 text-xl font-bold">CBN Sistema</span>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex md:items-center md:space-x-4">
+          <a href="/" class="px-3 py-2 text-sm font-medium hover:bg-cerveza text-white rounded-md transition duration-150">Inicio</a>
+          <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-markov">Cadenas de Markov</a>
+          <a href="{{ url_for('markov.listar_ejercicios') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-ejercicios">Ejercicios</a>
+          <a href="{{ url_for('maquinas.listar_maquinas') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-maquinas">Máquinas</a>
+          <a href="/monitoreo" class="px-3 py-2 text-sm font-medium nav-item" id="nav-monitoreo">Monitoreo</a>
+          <a href="/seguimiento" class="px-3 py-2 text-sm font-medium nav-item" id="nav-seguimiento">Seguimiento</a>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button id="hamburger" type="button" class="text-white focus:outline-none">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="/" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
+        <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-markov">Cadenas de Markov</a>
+        <a href="{{ url_for('markov.listar_ejercicios') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-ejercicios">Ejercicios</a>
+        <a href="{{ url_for('maquinas.listar_maquinas') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-maquinas">Máquinas</a>
+        <a href="/monitoreo" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-monitoreo">Monitoreo</a>
+        <a href="/seguimiento" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-seguimiento">Seguimiento</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pb-12">
+    <!-- Header -->
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col space-y-3">
+          <!-- Breadcrumbs -->
+          <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+              <li class="inline-flex items-center">
+                <a href="/" class="text-gray-700 hover:text-cerveza">
+                  <i class="fas fa-home mr-1"></i> Inicio
+                </a>
+              </li>
+              <li>
+                <div class="flex items-center">
+                  <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
+                  <a href="{{ url_for('maquinas.listar_maquinas') }}" class="text-gray-700 hover:text-cerveza">Máquinas</a>
+                </div>
+              </li>
+              <li aria-current="page">
+                <div class="flex items-center">
+                  <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
+                  <span class="text-gray-500">Registrar Máquina</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+          
+          <!-- Título y botones -->
+          <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-900">Registro de Máquinas</h1>
+            <a href="{{ url_for('maquinas.listar_maquinas') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-malta hover:bg-cebada">
+              <i class="fas fa-list mr-2"></i> Ver Listado
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <!-- Mensajes flash para notificaciones -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="p-4 mb-4 {% if category == 'success' %}bg-green-100 border-l-4 border-green-500 text-green-700{% else %}bg-red-100 border-l-4 border-red-500 text-red-700{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-6">
+          <h2 class="text-2xl font-bold mb-6 text-cebada">Datos de la Máquina</h2>
+          
+          <form id="formMaquina" method="POST" action="{{ url_for('maquinas.registrar_maquina') }}">
+            <div class="space-y-6">
+              <div>
+                <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre de la Máquina</label>
+                <input type="text" name="nombre" id="nombre" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 py-2 px-3 border">
+                <p class="mt-1 text-sm text-red-600 hidden" id="error-nombre">Por favor ingrese un nombre para la máquina.</p>
+              </div>
+              
+              <div>
+                <label for="tipo_maquina" class="block text-sm font-medium text-gray-700">Tipo de Máquina</label>
+                <select name="tipo_maquina" id="tipo_maquina" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 py-2 px-3 border">
+                  <option value="">Seleccione un tipo</option>
+                  <option value="Envasadora">Envasadora</option>
+                  <option value="Etiquetadora">Etiquetadora</option>
+                  <option value="Pasteurizadora">Pasteurizadora</option>
+                  <option value="Embotelladora">Embotelladora</option>
+                  <option value="Fermentador">Fermentador</option>
+                  <option value="Otro">Otro</option>
+                </select>
+                <p class="mt-1 text-sm text-red-600 hidden" id="error-tipo">Por favor seleccione un tipo de máquina.</p>
+              </div>
+
+              <div>
+                <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
+                <textarea name="descripcion" id="descripcion" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 py-2 px-3 border"></textarea>
+              </div>
+
+              <div>
+                <label for="frec_manteni" class="block text-sm font-medium text-gray-700">Frecuencia de Mantenimiento</label>
+                <select name="frec_manteni" id="frec_manteni" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cerveza focus:ring focus:ring-cerveza focus:ring-opacity-50 py-2 px-3 border">
+                  <option value="">Seleccione frecuencia</option>
+                  <option value="Diaria">Diaria</option>
+                  <option value="Semanal">Semanal</option>
+                  <option value="Quincenal">Quincenal</option>
+                  <option value="Mensual">Mensual</option>
+                  <option value="Bimestral">Bimestral</option>
+                  <option value="Trimestral">Trimestral</option>
+                  <option value="Semestral">Semestral</option>
+                  <option value="Anual">Anual</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+                <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cerveza hover:bg-cebada focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cerveza">
+                  <i class="fas fa-save mr-2"></i>Registrar Máquina
+                </button>
+                <a href="{{ url_for('maquinas.listar_maquinas') }}" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cerveza">
+                  <i class="fas fa-times mr-2"></i>Cancelar
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Al final del body, agregar el script para marcar ítems activos -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Determinar página actual
+      const currentPath = window.location.pathname;
+      
+      // Activar ítem en el nav principal
+      document.getElementById('nav-maquinas').classList.add('bg-cerveza');
+      document.getElementById('mobile-nav-maquinas').classList.add('bg-cerveza');
+      
+      // Eliminar referencias al submenu que ya no existe
+      // document.getElementById('submenu-registrar').classList.add('bg-cebada', 'text-white');
+      
+      // Resto del código para el hamburger menu y validación del formulario
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      hamburger.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+      
+      // Validación del formulario
+      const formMaquina = document.getElementById('formMaquina');
+      formMaquina.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Validar nombre
+        const nombre = document.getElementById('nombre');
+        if (!nombre.value.trim()) {
+          document.getElementById('error-nombre').classList.remove('hidden');
+          isValid = false;
+        } else {
+          document.getElementById('error-nombre').classList.add('hidden');
+        }
+        
+        // Validar tipo_maquina
+        const tipoMaquina = document.getElementById('tipo_maquina');
+        if (!tipoMaquina.value) {
+          document.getElementById('error-tipo').classList.remove('hidden');
+          isValid = false;
+        } else {
+          document.getElementById('error-tipo').classList.add('hidden');
+        }
+        
+        if (!isValid) {
+          event.preventDefault();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

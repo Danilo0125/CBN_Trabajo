@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBN - Listado de Máquinas</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cerveza': '#FFCC33',
+            'cebada': '#C1994D',
+            'espuma': '#FFF3E0',
+            'malta': '#8B4513',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-espuma text-gray-900 font-sans">
+  <!-- Top Navigation -->
+  <nav class="bg-cebada text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <!-- Logo -->
+          <div class="flex-shrink-0 flex items-center">
+            <img class="h-10 w-auto" src="/static/images/logo.png" alt="CBN Logo">
+            <span class="ml-2 text-xl font-bold">CBN Sistema</span>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex md:items-center md:space-x-4">
+          <a href="/" class="px-3 py-2 text-sm font-medium hover:bg-cerveza text-white rounded-md transition duration-150">Inicio</a>
+          <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-markov">Cadenas de Markov</a>
+          <a href="{{ url_for('markov.listar_ejercicios') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-ejercicios">Ejercicios</a>
+          <a href="{{ url_for('maquinas.listar_maquinas') }}" class="px-3 py-2 text-sm font-medium nav-item" id="nav-maquinas">Máquinas</a>
+          <a href="/monitoreo" class="px-3 py-2 text-sm font-medium nav-item" id="nav-monitoreo">Monitoreo</a>
+          <a href="/seguimiento" class="px-3 py-2 text-sm font-medium nav-item" id="nav-seguimiento">Seguimiento</a>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button id="hamburger" type="button" class="text-white focus:outline-none">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="/" class="hover:bg-cerveza block px-3 py-2 rounded-md text-base font-medium">Inicio</a>
+        <a href="{{ url_for('markov.mostrar_cadena_markov') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-markov">Cadenas de Markov</a>
+        <a href="{{ url_for('markov.listar_ejercicios') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-ejercicios">Ejercicios</a>
+        <a href="{{ url_for('maquinas.listar_maquinas') }}" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-maquinas">Máquinas</a>
+        <a href="/monitoreo" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-monitoreo">Monitoreo</a>
+        <a href="/seguimiento" class="mobile-nav-item block px-3 py-2 rounded-md text-base font-medium" id="mobile-nav-seguimiento">Seguimiento</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pb-12">
+    <!-- Header con breadcrumbs -->
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col space-y-3">
+          <!-- Breadcrumbs -->
+          <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+              <li class="inline-flex items-center">
+                <a href="/" class="text-gray-700 hover:text-cerveza">
+                  <i class="fas fa-home mr-1"></i> Inicio
+                </a>
+              </li>
+              <li aria-current="page">
+                <div class="flex items-center">
+                  <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
+                  <span class="text-gray-500">Máquinas</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+          
+          <!-- Título y botones -->
+          <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-900">Listado de Máquinas</h1>
+            <a href="{{ url_for('maquinas.mostrar_formulario_maquina') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-cerveza hover:bg-cebada">
+              <i class="fas fa-plus mr-2"></i> Registrar Nueva Máquina
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <!-- Mensajes flash -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="p-4 mb-4 {% if category == 'success' %}bg-green-100 border-l-4 border-green-500 text-green-700{% else %}bg-red-100 border-l-4 border-red-500 text-red-700{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
+      <!-- Filtros y búsqueda -->
+      <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+          <h2 class="text-xl font-bold text-cebada flex items-center">
+            <i class="fas fa-filter mr-2"></i> Filtros
+          </h2>
+          <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+            <div class="relative">
+              <select id="filtro-tipo" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-cerveza focus:border-cerveza rounded-md">
+                <option value="">Todos los tipos</option>
+                <option value="Envasadora">Envasadora</option>
+                <option value="Etiquetadora">Etiquetadora</option>
+                <option value="Pasteurizadora">Pasteurizadora</option>
+                <option value="Embotelladora">Embotelladora</option>
+                <option value="Fermentador">Fermentador</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div class="relative flex-grow">
+              <input type="text" id="busqueda" placeholder="Buscar por nombre..." class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-cerveza focus:border-cerveza">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+              </div>
+            </div>
+            <button id="btn-buscar" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-cebada hover:bg-malta focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cerveza">
+              Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tabla de máquinas -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-cebada">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  Nombre
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  Tipo
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  Frec. Mantenimiento
+                </th>
+                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {% if maquinas %}
+                {% for maquina in maquinas %}
+                  <tr class="hover:bg-espuma transition-colors duration-150 ease-in-out">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">{{ maquina.nombre }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        {{ maquina.tipo_maquina }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {{ maquina.frec_manteni or "No especificada" }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                      <div class="flex justify-center space-x-2">
+                        <a href="{{ url_for('maquinas.ver_maquina', id_maquina=maquina.id) }}" class="text-indigo-600 hover:text-indigo-900" title="Ver detalles">
+                          <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ url_for('maquinas.editar_maquina', id_maquina=maquina.id) }}" class="text-amber-600 hover:text-amber-900" title="Editar">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ url_for('markov.ejercicios_por_maquina', id_maquina=maquina.id) }}" class="text-blue-600 hover:text-blue-900" title="Ver ejercicios">
+                          <i class="fas fa-calculator"></i>
+                        </a>
+                        <button onclick="confirmarEliminacion({{ maquina.id }})" class="text-red-600 hover:text-red-900" title="Eliminar">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                    No hay máquinas registradas. <a href="{{ url_for('maquinas.mostrar_formulario_maquina') }}" class="text-cerveza hover:underline">Registrar una nueva máquina</a>
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Paginación -->
+        <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+          <nav class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-700">
+                Mostrando <span class="font-medium">{{ maquinas|length }}</span> máquinas
+              </p>
+            </div>
+            <div class="flex-1 flex justify-end">
+              <a href="{{ url_for('maquinas.mostrar_formulario_maquina') }}" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-cerveza hover:bg-cebada">
+                <i class="fas fa-plus mr-2"></i> Nueva Máquina
+              </a>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal de confirmación para eliminar -->
+  <div id="modal-eliminar" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Confirmar eliminación</h3>
+      <p class="text-gray-700 mb-4">¿Está seguro de que desea eliminar esta máquina? Esta acción no se puede deshacer.</p>
+      <div class="flex justify-end space-x-3">
+        <button id="btn-cancelar" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancelar</button>
+        <form id="form-eliminar" method="POST" action="">
+          <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile menu toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburger = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      hamburger.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+      
+      // Filtrado y búsqueda
+      const btnBuscar = document.getElementById('btn-buscar');
+      const inputBusqueda = document.getElementById('busqueda');
+      const selectTipo = document.getElementById('filtro-tipo');
+      
+      btnBuscar.addEventListener('click', function() {
+        const busqueda = inputBusqueda.value.toLowerCase();
+        const tipo = selectTipo.value;
+        
+        const filas = document.querySelectorAll('tbody tr');
+        filas.forEach(function(fila) {
+          const nombre = fila.querySelector('td:first-child').textContent.toLowerCase();
+          const tipoMaquina = fila.querySelector('td:nth-child(2)').textContent.trim();
+          
+          const coincideNombre = nombre.includes(busqueda);
+          const coincideTipo = tipo === '' || tipoMaquina === tipo;
+          
+          if (coincideNombre && coincideTipo) {
+            fila.classList.remove('hidden');
+          } else {
+            fila.classList.add('hidden');
+          }
+        });
+      });
+      
+      // Enter en el campo de búsqueda
+      inputBusqueda.addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+          btnBuscar.click();
+        }
+      });
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // Determinar página actual
+      const currentPath = window.location.pathname;
+      
+      // Activar ítem en el nav principal
+      if (currentPath.includes('/monitoreo')) {
+        document.getElementById('nav-monitoreo').classList.add('bg-cerveza');
+        document.getElementById('mobile-nav-monitoreo').classList.add('bg-cerveza');
+      } else if (currentPath.includes('/seguimiento')) {
+        document.getElementById('nav-seguimiento').classList.add('bg-cerveza');
+        document.getElementById('mobile-nav-seguimiento').classList.add('bg-cerveza');
+      } else if (currentPath.includes('/maquinas')) {
+        document.getElementById('nav-maquinas').classList.add('bg-cerveza');
+        document.getElementById('mobile-nav-maquinas').classList.add('bg-cerveza');
+      }
+    });
+    
+    // Modal de confirmación para eliminar
+    function confirmarEliminacion(idMaquina) {
+      const modal = document.getElementById('modal-eliminar');
+      const formEliminar = document.getElementById('form-eliminar');
+      const btnCancelar = document.getElementById('btn-cancelar');
+      
+      formEliminar.action = `{{ url_for('maquinas.eliminar_maquina', id_maquina=0) }}`.replace('0', idMaquina);
+      modal.classList.remove('hidden');
+      
+      btnCancelar.addEventListener('click', function() {
+        modal.classList.add('hidden');
+      });
+    }
+  </script>
+</body>
+</html>
